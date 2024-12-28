@@ -1,0 +1,24 @@
+run:
+  name: baseSimple2045
+
+scenario:
+  ll:
+  - vopt
+  clusters:
+  - 39
+  opts:
+  - 2H
+  sector_opts:
+  - 2H
+  planning_horizons:
+  - 2045
+
+countries: ["DE"]
+
+sector:
+  enhanced_geothermal:
+    enable: true
+
+solver:
+    name: gurobi
+    options: gurobi-default
