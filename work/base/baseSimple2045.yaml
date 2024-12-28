@@ -16,5 +16,5 @@ scenario:
 countries: ["DE"]
 
 solver:
-    name: gurobi
-    options: gurobi-default
+  name: gurobi
+  options: gurobi-default

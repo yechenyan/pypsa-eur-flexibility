@@ -20,5 +20,5 @@ sector:
     enable: true
 
 solver:
-    name: gurobi
-    options: gurobi-default
+  name: gurobi
+  options: gurobi-default
