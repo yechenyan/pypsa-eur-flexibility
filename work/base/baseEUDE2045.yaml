@@ -1,21 +1,24 @@
 run:
-  name: simpleGeothermal2045
+  prefix: test
+  name: base39DE2045
 
 scenario:
   ll:
   - vopt
   clusters:
   - 39
+  opts:
+  - 3H-Ept
   sector_opts:
-  - 2H
+  - 3H
   planning_horizons:
   - 2045
 
 countries: ["DE"]
 
-sector:
-  enhanced_geothermal:
-    enable: true
+# clustering:
+#   focus_weights: 
+#     DE: 0.9
 
 solver:
   name: gurobi
