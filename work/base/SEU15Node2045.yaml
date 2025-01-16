@@ -1,19 +1,20 @@
 run:
-  name: base35Node2045-2H-e6
+  prefix: test
+  name: base35Node2045-2H-e5
 
 scenario:
   ll:
   - vopt
   clusters:
-  - 27
+  - 20
   opts:
-  - 3H
+  - 2H
   sector_opts:
-  - 3H
+  - 2H
   planning_horizons:
   - 2045
 
-countries: ['AT', 'BE', 'CH', 'CZ', 'DE', 'DK', 'FR', 'GB', 'LU', 'NL', 'NO', 'PL', 'SE', 'ES', 'IT']
+countries: ['AT','BA', 'BE', 'BG', 'CH', 'CZ', 'DE', 'EE', 'ES', 'FI','DK', 'FR', 'GB', 'LU', 'NL', 'NO', 'PL', 'SE', 'ES', 'IT']
 
 renewable:
   onwind:
@@ -81,29 +82,10 @@ solving:
     name: gurobi
     options: gurobi-default
 
-  # solver_options:
-  #   gurobi-default:
-  #     BarConvTol: 1.e-5
+  solver_options:
+    gurobi-default:
+      BarConvTol: 1.e-5
 
 costs:
   year: 2025
-
-clustering:
-  focus_weights:
-   # 27 nodes: 8 for Germany, 3 for Italy, 2 each for Denmark, UK and Spain, 1 per each of other 10 "Stromnachbarn"
-    'DE': 0.2966
-    'AT': 0.0370
-    'BE': 0.0370
-    'CH': 0.0370
-    'CZ': 0.0370
-    'DK': 0.0741
-    'FR': 0.0370
-    'GB': 0.0741
-    'LU': 0.0370
-    'NL': 0.0370
-    'NO': 0.0370
-    'PL': 0.0370
-    'SE': 0.0370
-    'ES': 0.0741
-    'IT': 0.1111
 
