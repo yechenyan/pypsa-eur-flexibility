@@ -5,4 +5,6 @@ run:
 sector:
   enhanced_geothermal:
     enable: true
+    var_cf: false
+    
 
