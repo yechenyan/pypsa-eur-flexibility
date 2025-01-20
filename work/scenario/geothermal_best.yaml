@@ -10,9 +10,9 @@ costs:
   override:
     geothermal:
       lifetime: 50
-      FOM: 0.5
+      FOM: 0.6
       district heat-input: 1
-      district heat surcharge: 50
+      district heat surcharge: 10
     organic rankine cycle:
       lifetime: 50
-      investment: 600
+      investment: 453
