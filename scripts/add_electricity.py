@@ -122,6 +122,7 @@ import xarray as xr
 from _helpers import (
     configure_logging,
     get_snapshots,
+    override_costs,
     rename_techs,
     set_scenario_config,
     update_p_nom_max,
@@ -236,6 +237,7 @@ def add_co2_emissions(n, costs, carriers):
 def load_costs(tech_costs, config, max_hours, Nyears=1.0):
     # set all asset costs and other parameters
     costs = pd.read_csv(tech_costs, index_col=[0, 1]).sort_index()
+    costs = override_costs(costs, config)
 
     # correct units from kW to MW
     costs.loc[costs.unit.str.contains("/kW"), "value"] *= 1e3

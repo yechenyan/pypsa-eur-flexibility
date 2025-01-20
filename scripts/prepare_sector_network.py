@@ -20,6 +20,7 @@ import xarray as xr
 from _helpers import (
     configure_logging,
     get,
+    override_costs,
     set_scenario_config,
     update_config_from_wildcards,
 )
@@ -1078,6 +1079,7 @@ def cycling_shift(df, steps=1):
 def prepare_costs(cost_file, params, nyears):
     # set all asset costs and other parameters
     costs = pd.read_csv(cost_file, index_col=[0, 1]).sort_index()
+    costs = override_costs(costs, params)
 
     # correct units to MW and EUR
     costs.loc[costs.unit.str.contains("/kW"), "value"] *= 1e3
