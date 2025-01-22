@@ -167,13 +167,35 @@ def de_heat_generator_grouper(n,c):
   return getEmptyIndex()
 pypsa.statistics.groupers.add_grouper("de_heat_generator_grouper", de_heat_generator_grouper)
 
+def de_biogas_generator_grouper(n, c):
+  if (c =='Generator'):
+    df = n.df(c)
+    return getIndexSeries(df, getIndexDeCarrier(df, 'biogas'))
+  return getEmptyIndex()
+pypsa.statistics.groupers.add_grouper("de_biogas_generator_grouper", de_biogas_generator_grouper)
+
+def de_gas_generator_grouper(n,c):
+  if (c =='Generator'):
+    df = n.df(c)
+    return getIndexSeries(df, getIndexDeCarrier(df, 'gas'))
+  
+  if (c == 'Link'):
+    df = n.df(c)
+    return getIndexSeries(df, 
+                      getIndexDeCarrier(df, 'Sabatier') |
+                      getIndexDeCarrier(df, 'biogas to gas')
+                      )
+  return getEmptyIndex()
+pypsa.statistics.groupers.add_grouper("de_gas_generator_grouper", de_gas_generator_grouper)
+
+
+
 def eu_grouper(n, c):
   df = n.df(c)
   print('----------------',c)
   print(df.groupby('carrier').size())
   indexs = df[df.index.astype(str).str.contains('EU')].index.to_series()
   return indexs
-
 pypsa.statistics.groupers.add_grouper("eu_grouper", eu_grouper)
 
 def dataframe_to_table(df):

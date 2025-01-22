@@ -1,0 +1,16 @@
+run:
+  prefix: scenario
+  name: biogas
+
+costs:
+  override:
+    biogas:
+      fuel: 30
+      lifetime: 30
+      FOM: 3.11
+      investment: 366.5
+    biogas upgrading:
+      VOM: 1
+      lifetime: 30
+      FOM: 6.84
+      investment: 32.6
