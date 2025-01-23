@@ -16,7 +16,7 @@ snakemake prepare_sector_networks --configfile work/base/SEU15Node2045.yaml --co
 
 
 // scenario
-snakemake -call all --configfile work/scenario/geothermal_optimist.yaml --cores all
+snakemake -call all --configfile work/scenario/PHS_best.yaml --cores all
 
 snakemake -call make_summary --configfile work/scenario/geothermal_mean.yaml --cores all
 
