@@ -1,6 +1,6 @@
 run:
   prefix: scenario
-  name: biogas
+  name: PHS
 
 renewable:
   hydro:
