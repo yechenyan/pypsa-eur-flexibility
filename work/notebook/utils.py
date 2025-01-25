@@ -188,7 +188,85 @@ def de_gas_generator_grouper(n,c):
   return getEmptyIndex()
 pypsa.statistics.groupers.add_grouper("de_gas_generator_grouper", de_gas_generator_grouper)
 
+def de_phs_grouper(n, c):
+  if (c == "StorageUnit"):
+    df = n.df(c)
+    return getIndexSeries(df, 
+                      getIndexDeCarrier(df, 'PHS')
+                      )
+  return getEmptyIndex()
+pypsa.statistics.groupers.add_grouper("de_phs_grouper", de_phs_grouper)
 
+def de_elec_store_grouper(n, c):
+  if (c == "StorageUnit"):
+    df = n.df(c)
+    return getIndexSeries(df, 
+                      getIndexDeCarrier(df, 'PHS') | 
+                      getIndexDeCarrier(df, 'hydro')
+                      )
+  if (c == 'Store'):
+    df = n.df(c)
+    return getIndexSeries(df,
+                         getIndexDeCarrier(df, 'EV battery') | 
+                         getIndexDeCarrier(df, 'battery') | 
+                         getIndexDeCarrier(df, 'home battery')
+                        )
+  return getEmptyIndex()
+pypsa.statistics.groupers.add_grouper("de_elec_store_grouper", de_elec_store_grouper)
+
+def de_h2_to_elc_gropuer(n,c):
+  if ( c == 'Link'):
+    df = n.df(c)
+    return getIndexSeries(df,
+                         getIndexDeCarrier(df, 'H2 Fuel Cell') 
+                        )
+  return getEmptyIndex()
+pypsa.statistics.groupers.add_grouper("de_h2_to_elc_gropuer", de_h2_to_elc_gropuer)
+
+def de_elc_to_h2_grouper(n,c):
+  if ( c == 'Link'):
+    df = n.df(c)
+    return getIndexSeries(df,
+                         getIndexDeCarrier(df, 'H2 Electrolysis') 
+                        )
+  return getEmptyIndex()
+pypsa.statistics.groupers.add_grouper("de_elc_to_h2_grouper", de_elc_to_h2_grouper)
+
+
+def de_elec_use_grouper(n,c):
+  if (c == 'Load'):
+    df = n.df(c)
+    return getIndexSeries(df,
+                          getIndexDeCarrier(df, 'agriculture electricity') |
+                          getIndexDeCarrier(df, 'electricity') |
+                          getIndexDeCarrier(df, 'industry electricity')  
+                          )
+  if (c == 'Link'):
+    df = n.df(c)
+    return getIndexSeries(df,
+                          getIndexDeCarrier(df, 'urban central air heat pump') |
+                          getIndexDeCarrier(df, 'urban central resistive heater') |
+                          getIndexDeCarrier(df, 'rural air heat pump') |
+                          getIndexDeCarrier(df, 'rural ground heat pump') |
+                          getIndexDeCarrier(df, 'rural resistive heater') |
+                          getIndexDeCarrier(df, 'urban decentral air heat pump') |
+                          getIndexDeCarrier(df, 'urban decentral resistive heater') |
+                          getIndexDeCarrier(df, 'urban decentral resistive heater') |
+                          getIndexDeCarrier(df, 'DAC') 
+                          )
+  return getEmptyIndex()
+pypsa.statistics.groupers.add_grouper("de_elec_use_grouper", de_elec_use_grouper)
+
+
+def de_elec_charge_grouper(n, c):
+  if (c == 'Link'):
+    df = n.df(c)
+    return getIndexSeries(df,
+                          getIndexDeCarrier(df, 'BEV charger') |
+                          getIndexDeCarrier(df, 'urban central air heat pump') |
+                          getIndexDeCarrier(df, 'urban central resistive heater') |
+                          getIndexDeCarrier(df, 'urban central resistive heater')    
+                          )
 
 def eu_grouper(n, c):
   df = n.df(c)
