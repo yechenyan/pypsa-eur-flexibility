@@ -296,7 +296,23 @@ def de_elec_charge_grouper(n, c):
                           getIndexDeCarrier(df, 'urban central resistive heater') |
                           getIndexDeCarrier(df, 'urban central resistive heater')    
                           )
+  return getEmptyIndex()
 grouperMap['de_elec_charge_grouper'] = de_elec_charge_grouper
+
+def de_dsm_grouper(n, c):
+  if (c == 'Link'):
+    df = n.df(c)
+    return getIndexSeries(df,
+                          getIndexDeCarrier(df, 'BEV charger')
+                          )
+  if (c == 'Link'):
+    df = n.df(c)
+    return getIndexSeries(df,
+                          getIndexDeCarrier(df, 'EV battery')
+                          )
+  return getEmptyIndex()
+grouperMap['de_dsm_grouper'] = de_dsm_grouper
+  
 
 
 def eu_grouper(n, c):
