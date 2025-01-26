@@ -229,6 +229,17 @@ def de_elec_store_grouper(n, c):
   return getEmptyIndex()
 grouperMap['de_elec_store_grouper'] = de_elec_store_grouper
 
+def de_battery_store_grouper(n, c):
+  if (c == 'Store'):
+    df = n.df(c)
+    return getIndexSeries(df,
+                         getIndexDeCarrier(df, 'battery') | 
+                         getIndexDeCarrier(df, 'home battery')
+                        )
+  return getEmptyIndex()
+grouperMap['de_battery_store_grouper'] = de_battery_store_grouper
+ 
+
 def de_h2_to_elc_gropuer(n,c):
   if ( c == 'Link'):
     df = n.df(c)
