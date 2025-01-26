@@ -7,6 +7,8 @@ pd.set_option('display.max_columns', None)
 pd.set_option('display.max_rows', None)
 pd.set_option('display.float_format', '{:.5f}'.format)
 
+
+
 def getIndexDe (df):
   return df.index.str.startswith('DE0')
 
@@ -38,6 +40,8 @@ def replaceCarrier (df, old, new):
   df['carrier'] = df['carrier'].replace(old, new)
   return df
 
+grouperMap = {}
+
 def de_grouper(n, c):
   if (c == 'Line'):
     dfLine = n.df(c)
@@ -53,7 +57,8 @@ def de_grouper(n, c):
 
   df = n.df(c)
   return df[df.index.str.startswith('DE0')].index.to_series()
-pypsa.statistics.groupers.add_grouper("de_grouper", de_grouper)
+grouperMap['de_grouper'] = de_grouper
+
 
 def de_import_elec_grouper(n, c):
   if (c == 'Line'):
@@ -68,13 +73,13 @@ def de_import_elec_grouper(n, c):
                   & (~(dfLink['bus0'].str.startswith('DE0')))].index.to_series()
 
   return pd.Index([]).to_series()
-pypsa.statistics.groupers.add_grouper("de_import_elec_grouper", de_import_elec_grouper)
+grouperMap['de_import_elec_grouper'] = de_import_elec_grouper
 
 def de_export_elec_grouper(n,c):
   if (c == 'Line'):
     dfLine = n.df(c)
     return dfLine[(dfLine['bus0'].str.startswith('DE0')) 
-                  & (~(dfLine['bus1'].str.startswith('DE0')))].index.to_series()
+                  & (~(dfLine['bus1'].str.startswith('DE0'))) ].index.to_series()
   
   if (c == 'Link'):
     dfLink = n.df(c)
@@ -83,7 +88,7 @@ def de_export_elec_grouper(n,c):
                   & (~(dfLink['bus1'].str.startswith('DE0')))].index.to_series()
 
   return pd.Index([]).to_series()
-pypsa.statistics.groupers.add_grouper("de_export_elec_grouper", de_export_elec_grouper)
+grouperMap['de_export_elec_grouper'] = de_export_elec_grouper
 
 def de_import_h2_grouper(n,c):
   if (c == 'Link'):
@@ -93,7 +98,7 @@ def de_import_h2_grouper(n,c):
                   & (~(dfLink['bus0'].str.startswith('DE0')))].index.to_series()
   
   return pd.Index([]).to_series()
-pypsa.statistics.groupers.add_grouper("de_import_h2_grouper", de_import_h2_grouper)
+grouperMap['de_import_h2_grouper'] = de_import_h2_grouper
 
 def de_export_h2_grouper(n,c):
   if (c == 'Link'):
@@ -103,7 +108,7 @@ def de_export_h2_grouper(n,c):
                   & (~(dfLink['bus1'].str.startswith('DE0')))].index.to_series()
   
   return pd.Index([]).to_series()
-pypsa.statistics.groupers.add_grouper("de_export_h2_grouper", de_export_h2_grouper)
+grouperMap['de_export_h2_grouper'] = de_export_h2_grouper
 
 def de_generator_grouper(n,c):
   if ( c == 'Generator'):
@@ -133,7 +138,7 @@ def de_generator_grouper(n,c):
               ].index.to_series()
     return index
   return getEmptyIndex()
-pypsa.statistics.groupers.add_grouper("de_generator_grouper", de_generator_grouper)
+grouperMap['de_generator_grouper'] = de_generator_grouper
 
 
 def de_heat_generator_grouper(n,c):
@@ -165,14 +170,14 @@ def de_heat_generator_grouper(n,c):
                         getIndexDeCarrier(df, 'geothermal district heat') 
                       )
   return getEmptyIndex()
-pypsa.statistics.groupers.add_grouper("de_heat_generator_grouper", de_heat_generator_grouper)
+grouperMap['de_heat_generator_grouper'] = de_heat_generator_grouper
 
 def de_biogas_generator_grouper(n, c):
   if (c =='Generator'):
     df = n.df(c)
     return getIndexSeries(df, getIndexDeCarrier(df, 'biogas'))
   return getEmptyIndex()
-pypsa.statistics.groupers.add_grouper("de_biogas_generator_grouper", de_biogas_generator_grouper)
+grouperMap['de_biogas_generator_grouper'] = de_biogas_generator_grouper
 
 def de_gas_generator_grouper(n,c):
   if (c =='Generator'):
@@ -186,7 +191,7 @@ def de_gas_generator_grouper(n,c):
                       getIndexDeCarrier(df, 'biogas to gas')
                       )
   return getEmptyIndex()
-pypsa.statistics.groupers.add_grouper("de_gas_generator_grouper", de_gas_generator_grouper)
+grouperMap['de_gas_generator_grouper'] = de_gas_generator_grouper
 
 def de_phs_grouper(n, c):
   if (c == "StorageUnit"):
@@ -195,7 +200,7 @@ def de_phs_grouper(n, c):
                       getIndexDeCarrier(df, 'PHS')
                       )
   return getEmptyIndex()
-pypsa.statistics.groupers.add_grouper("de_phs_grouper", de_phs_grouper)
+grouperMap['de_phs_grouper'] = de_phs_grouper
 
 def de_elec_store_grouper(n, c):
   if (c == "StorageUnit"):
@@ -212,7 +217,7 @@ def de_elec_store_grouper(n, c):
                          getIndexDeCarrier(df, 'home battery')
                         )
   return getEmptyIndex()
-pypsa.statistics.groupers.add_grouper("de_elec_store_grouper", de_elec_store_grouper)
+grouperMap['de_elec_store_grouper'] = de_elec_store_grouper
 
 def de_h2_to_elc_gropuer(n,c):
   if ( c == 'Link'):
@@ -221,7 +226,7 @@ def de_h2_to_elc_gropuer(n,c):
                          getIndexDeCarrier(df, 'H2 Fuel Cell') 
                         )
   return getEmptyIndex()
-pypsa.statistics.groupers.add_grouper("de_h2_to_elc_gropuer", de_h2_to_elc_gropuer)
+grouperMap['de_h2_to_elc_gropuer'] = de_h2_to_elc_gropuer
 
 def de_elc_to_h2_grouper(n,c):
   if ( c == 'Link'):
@@ -230,7 +235,7 @@ def de_elc_to_h2_grouper(n,c):
                          getIndexDeCarrier(df, 'H2 Electrolysis') 
                         )
   return getEmptyIndex()
-pypsa.statistics.groupers.add_grouper("de_elc_to_h2_grouper", de_elc_to_h2_grouper)
+grouperMap['de_elc_to_h2_grouper'] = de_elc_to_h2_grouper
 
 
 def de_elec_use_grouper(n,c):
@@ -239,7 +244,8 @@ def de_elec_use_grouper(n,c):
     return getIndexSeries(df,
                           getIndexDeCarrier(df, 'agriculture electricity') |
                           getIndexDeCarrier(df, 'electricity') |
-                          getIndexDeCarrier(df, 'industry electricity')  
+                          getIndexDeCarrier(df, 'industry electricity')  |
+                          getIndexDeCarrier(df, 'land transport EV')  
                           )
   if (c == 'Link'):
     df = n.df(c)
@@ -255,7 +261,7 @@ def de_elec_use_grouper(n,c):
                           getIndexDeCarrier(df, 'DAC') 
                           )
   return getEmptyIndex()
-pypsa.statistics.groupers.add_grouper("de_elec_use_grouper", de_elec_use_grouper)
+grouperMap['de_elec_use_grouper'] = de_elec_use_grouper
 
 
 def de_elec_charge_grouper(n, c):
@@ -267,6 +273,8 @@ def de_elec_charge_grouper(n, c):
                           getIndexDeCarrier(df, 'urban central resistive heater') |
                           getIndexDeCarrier(df, 'urban central resistive heater')    
                           )
+grouperMap['de_elec_charge_grouper'] = de_elec_charge_grouper
+
 
 def eu_grouper(n, c):
   df = n.df(c)
@@ -274,7 +282,7 @@ def eu_grouper(n, c):
   print(df.groupby('carrier').size())
   indexs = df[df.index.astype(str).str.contains('EU')].index.to_series()
   return indexs
-pypsa.statistics.groupers.add_grouper("eu_grouper", eu_grouper)
+grouperMap['eu_grouper'] = eu_grouper
 
 def dataframe_to_table(df):
     df = df.fillna('/')
@@ -290,6 +298,11 @@ def dataframe_to_table(df):
         formatted_row = ', '.join(formatted_elements)
         result_list.append(f'  {formatted_row},') 
     return '\n'.join(result_list)
+
+def assignGrouper (pypsa):
+  for kye, value in grouperMap.items():
+    pypsa.statistics.groupers.add_grouper(kye, value)
+
 
 def renameHeatCarrier (df):
   df.rename(index={'geothermal district heat': 'Geothermie'}, inplace=True)
