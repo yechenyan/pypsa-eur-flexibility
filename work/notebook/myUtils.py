@@ -75,6 +75,16 @@ def de_import_elec_grouper(n, c):
   return pd.Index([]).to_series()
 grouperMap['de_import_elec_grouper'] = de_import_elec_grouper
 
+def de_import_elec_reverse_grouper(n, c):
+  if (c == 'Line'):
+    dfLink = n.df(c)
+    return dfLink[(~(dfLink['bus1'].str.startswith('DE0'))) 
+
+                  & (dfLink['bus0'].str.startswith('DE0'))].index.to_series()
+
+  return pd.Index([]).to_series()
+grouperMap['de_import_elec_reverse_grouper'] = de_import_elec_reverse_grouper
+
 def de_export_elec_grouper(n,c):
   if (c == 'Line'):
     dfLine = n.df(c)
@@ -248,6 +258,7 @@ def de_elec_use_grouper(n,c):
                           getIndexDeCarrier(df, 'land transport EV')  
                           )
   if (c == 'Link'):
+    
     df = n.df(c)
     return getIndexSeries(df,
                           getIndexDeCarrier(df, 'urban central air heat pump') |
@@ -261,6 +272,7 @@ def de_elec_use_grouper(n,c):
                           getIndexDeCarrier(df, 'DAC') 
                           )
   return getEmptyIndex()
+pypsa.statistics.groupers.add_grouper('de_elec_use_grouper', de_elec_use_grouper)
 grouperMap['de_elec_use_grouper'] = de_elec_use_grouper
 
 
@@ -302,7 +314,10 @@ def dataframe_to_table(df):
 def assignGrouper (pypsa):
   for kye, value in grouperMap.items():
     pypsa.statistics.groupers.add_grouper(kye, value)
+assignGrouper(pypsa)
 
+def hi():
+  print('hi4')
 
 def renameHeatCarrier (df):
   df.rename(index={'geothermal district heat': 'Geothermie'}, inplace=True)

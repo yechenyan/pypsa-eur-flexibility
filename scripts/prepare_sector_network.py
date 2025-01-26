@@ -1628,7 +1628,7 @@ def add_storage_and_grids(n, costs):
         e_cyclic=True,
         e_nom_extendable=True,
         carrier="battery",
-        capital_cost=1, # costs.at["battery storage", "fixed"],
+        capital_cost=costs.at["battery storage", "fixed"],
         lifetime=costs.at["battery storage", "lifetime"],
     )
 
@@ -1638,8 +1638,8 @@ def add_storage_and_grids(n, costs):
         bus0=nodes,
         bus1=nodes + " battery",
         carrier="battery charger",
-        efficiency=1, # costs.at["battery inverter", "efficiency"] ** 0.5,
-        capital_cost=0.01, # costs.at["battery inverter", "fixed"],
+        efficiency=costs.at["battery inverter", "efficiency"] ** 0.5,
+        capital_cost=costs.at["battery inverter", "fixed"],
         p_nom_extendable=True,
         lifetime=costs.at["battery inverter", "lifetime"],
     )
@@ -1651,7 +1651,7 @@ def add_storage_and_grids(n, costs):
         bus1=nodes,
         carrier="battery discharger",
         efficiency=costs.at["battery inverter", "efficiency"] ** 0.5,
-        marginal_cost=0.01, # options["marginal_cost_storage"],
+        marginal_cost=options["marginal_cost_storage"],
         p_nom_extendable=True,
         lifetime=costs.at["battery inverter", "lifetime"],
     )
