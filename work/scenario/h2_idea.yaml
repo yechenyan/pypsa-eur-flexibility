@@ -31,6 +31,9 @@ sector:
   H2_retrofit_capacity_per_CH4: 0.6
   H2_turbine_FOM_Ratio: 0.1
   H2_turbine_VOM_Ratio: 0.1
+  bev_dsm: false
+  v2g: false
+
 
 
   

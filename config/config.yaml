@@ -4,7 +4,7 @@ run:
 
 scenario:
   ll:
-  - vopt
+  - c1
   clusters:
   - 27
   opts:
