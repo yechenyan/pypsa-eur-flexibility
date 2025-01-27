@@ -27,10 +27,9 @@ costs:
       lifetime: 30
     central air-sourced heat pump:
       FOM: 0.1362096
-      investment: 652.391136]
+      investment: 652.391136
       lifetime: 35
     decentral air-sourced heat pump:
       FOM: 1.930068
       investment: 596.202048
       lifetime: 25
-    
