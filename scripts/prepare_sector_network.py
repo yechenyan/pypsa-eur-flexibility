@@ -1404,8 +1404,9 @@ def add_storage_and_grids(n, costs):
             carrier="H2 turbine",
             efficiency=costs.at["OCGT", "efficiency"],
             capital_cost=costs.at["OCGT", "fixed"]
-            * costs.at["OCGT", "efficiency"],  # NB: fixed cost is per MWel
-            marginal_cost=costs.at["OCGT", "VOM"],
+            * costs.at["OCGT", "efficiency"]
+            * options["H2_turbine_FOM_Ratio"],  # NB: fixed cost is per MWel
+            marginal_cost=costs.at["OCGT", "VOM"] * options["H2_turbine_VOM_Ratio"],
             lifetime=costs.at["OCGT", "lifetime"],
         )
 
@@ -1445,9 +1446,10 @@ def add_storage_and_grids(n, costs):
         )
 
     # hydrogen stored overground (where not already underground)
-    h2_capital_cost = costs.at[
-        "hydrogen storage tank type 1 including compressor", "fixed"
-    ]
+    # h2_capital_cost = costs.at[
+    #     "hydrogen storage tank type 1 including compressor", "fixed"
+    # ]
+    h2_capital_cost = costs.at["hydrogen storage underground", "fixed"]
     nodes_overground = h2_caverns.index.symmetric_difference(nodes)
 
     n.add(
@@ -1458,6 +1460,7 @@ def add_storage_and_grids(n, costs):
         e_cyclic=True,
         carrier="H2 Store",
         capital_cost=h2_capital_cost,
+        lifetime=costs.at["hydrogen storage underground", "lifetime"],
     )
 
     if options["gas_network"] or options["H2_retrofit"]:
