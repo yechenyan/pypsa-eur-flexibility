@@ -20,6 +20,7 @@ import xarray as xr
 from _helpers import (
     configure_logging,
     get,
+    override_costs,
     set_scenario_config,
     update_config_from_wildcards,
 )
@@ -1078,6 +1079,7 @@ def cycling_shift(df, steps=1):
 def prepare_costs(cost_file, params, nyears):
     # set all asset costs and other parameters
     costs = pd.read_csv(cost_file, index_col=[0, 1]).sort_index()
+    costs = override_costs(costs, params)
 
     # correct units to MW and EUR
     costs.loc[costs.unit.str.contains("/kW"), "value"] *= 1e3
@@ -1402,8 +1404,9 @@ def add_storage_and_grids(n, costs):
             carrier="H2 turbine",
             efficiency=costs.at["OCGT", "efficiency"],
             capital_cost=costs.at["OCGT", "fixed"]
-            * costs.at["OCGT", "efficiency"],  # NB: fixed cost is per MWel
-            marginal_cost=costs.at["OCGT", "VOM"],
+            * costs.at["OCGT", "efficiency"]
+            * options["H2_turbine_FOM_Ratio"],  # NB: fixed cost is per MWel
+            marginal_cost=costs.at["OCGT", "VOM"] * options["H2_turbine_VOM_Ratio"],
             lifetime=costs.at["OCGT", "lifetime"],
         )
 
@@ -1443,9 +1446,10 @@ def add_storage_and_grids(n, costs):
         )
 
     # hydrogen stored overground (where not already underground)
-    h2_capital_cost = costs.at[
-        "hydrogen storage tank type 1 including compressor", "fixed"
-    ]
+    # h2_capital_cost = costs.at[
+    #     "hydrogen storage tank type 1 including compressor", "fixed"
+    # ]
+    h2_capital_cost = costs.at["hydrogen storage underground", "fixed"]
     nodes_overground = h2_caverns.index.symmetric_difference(nodes)
 
     n.add(
@@ -1456,6 +1460,7 @@ def add_storage_and_grids(n, costs):
         e_cyclic=True,
         carrier="H2 Store",
         capital_cost=h2_capital_cost,
+        lifetime=costs.at["hydrogen storage underground", "lifetime"],
     )
 
     if options["gas_network"] or options["H2_retrofit"]:
@@ -4481,6 +4486,10 @@ def add_enhanced_geothermal(n, egs_potentials, egs_overlap, costs):
         efficiency = pd.read_csv(
             snakemake.input.egs_capacity_factors, parse_dates=True, index_col=0
         )
+        if snakemake.config["clustering"]["temporal"]["resolution_sector"]:
+            efficiency = efficiency.resample(
+                snakemake.config["clustering"]["temporal"]["resolution_sector"]
+            ).mean()
         logger.info("Adding Enhanced Geothermal with time-varying capacity factors.")
     else:
         efficiency = 1.0

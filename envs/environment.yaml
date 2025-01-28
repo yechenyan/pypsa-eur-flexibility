@@ -61,7 +61,7 @@ dependencies:
 - libgdal-core<3.10.0 # rasterio>=1.4.2 needed for GDAL 3.10
 
 - pip:
-  - gurobipy
+  - gurobipy==11.0
   - highspy<1.8
   - tsam>=2.3.1
   - snakemake-storage-plugin-http
