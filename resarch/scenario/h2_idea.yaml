@@ -34,9 +34,6 @@ sector:
   bev_dsm: false
   v2g: false
 
-
-
-  
 costs:
   override:
     electrolysis:
