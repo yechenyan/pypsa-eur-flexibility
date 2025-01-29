@@ -1,6 +1,7 @@
 import pypsa
 import matplotlib.pyplot as plt
 import pandas as pd
+from functools import reduce
 
 pd.set_option('display.width', 1000000)
 pd.set_option('display.max_columns', None)
@@ -19,16 +20,22 @@ def getBus1De (df):
   return df['bus1'].str.startswith('DE0')
 
 def getDeExport (df):
-  return (df['bus1'].str.startswith('DE0')) & (~(df['bus0'].str.startswith('DE0')))
+  return (df['bus0'].str.startswith('DE0')) & (~(df['bus1'].str.startswith('DE0')))
 
 def getDeImport (df):
-  return (~(df['bus1'].str.startswith('DE0'))) & (df['bus0'].str.startswith('DE0'))
+  return (~(df['bus0'].str.startswith('DE0'))) & (df['bus1'].str.startswith('DE0'))
 
 def getTheCarrier (df , carrier):
   return (df['carrier'] == carrier)
 
 def getIndexDeCarrier (df , carrier):
   return getIndexDe(df) & getTheCarrier(df, carrier)
+
+def getIndexDeExportCarrier (df, carrier):
+  return getDeExport(df) & getTheCarrier(df, carrier)
+
+def getIndexDeImportCarrier (df, carrier):
+  return getDeImport(df) & getTheCarrier(df, carrier)
 
 def make_grouper(name, items):
   def process_grouper(n, c):
@@ -48,14 +55,45 @@ def getDeIndexes (component,  carriers):
   # n.statistics.optimal_capacity(groupby=de_XXX_grouper)
 
   def getIndexes (df):
-    return any(getIndexDeCarrier(df, carrier) for carrier in carriers)
+    series_list = []
+
+    for carrier in carriers:
+      series_list.append(getIndexDeCarrier(df, carrier))
+
+    result = reduce(lambda x, y: x | y, series_list)
+
+    return result
 
   return [component, getIndexes] 
 
 
+def getNByGroup (n, component, grouper):
+  indexes =  grouper(n, component)
+  dict = {
+    'Generator': n.generators,
+    'Link': n.links,
+    'Line': n.lines,
+    'Store': n.stores,
+    'StorageUnit': n.storage_units,
+    'Load': n.loads
+  }
 
-de_h2_load_grouper = make_grouper('de_h2_load_grouper',[('Load', lambda df: 
-                       (getIndexDeCarrier(df, 'H2 for industry')))])
+  return dict[component].loc[indexes]
+
+def getNTimePropByGroup (n, component, prop, grouper):
+  indexes =  grouper(n, component)
+  dict = {
+    'Generator': n.generators_t,
+    'Link': n.links_t,
+    'Line': n.lines_t,
+    'Store': n.stores_t,
+    'StorageUnit': n.storage_units_t,
+    'Load': n.loads_t
+  }
+
+  return dict[component][prop][indexes]
+
+
 
 
 def getIndexSeries(df, condition):
@@ -128,33 +166,28 @@ def de_export_elec_grouper(n,c):
   return pd.Index([]).to_series()
 grouperMap['de_export_elec_grouper'] = de_export_elec_grouper
 
-def de_import_h2_grouper(n,c):
-  if (c == 'Link'):
-    dfLink = n.df(c)
-    return dfLink[(dfLink['bus1'].str.startswith('DE0')) 
-                  & (dfLink['carrier'] == 'H2 pipeline') 
-                  & (~(dfLink['bus0'].str.startswith('DE0')))].index.to_series()
-  
-  return pd.Index([]).to_series()
-grouperMap['de_import_h2_grouper'] = de_import_h2_grouper
 
-def de_export_h2_grouper(n,c):
-  if (c == 'Link'):
-    dfLink = n.df(c)
-    return dfLink[(dfLink['bus0'].str.startswith('DE0')) 
-                  & (dfLink['carrier'] == 'H2 pipeline')  
-                  & (~(dfLink['bus1'].str.startswith('DE0')))].index.to_series()
-  
-  return pd.Index([]).to_series()
-grouperMap['de_export_h2_grouper'] = de_export_h2_grouper
+## section generator
+de_pv_generator_grouper = make_grouper('de_pv_generator_grouper', [
+  getDeIndexes('Generator', ['solar', 'solar rooftop', 'solar-hsat'])
+])
+de_wind_generator_grouper = make_grouper('de_wind_generator_grouper', [
+  getDeIndexes('Generator', ['offwind-ac', 'offwind-dc', 'ffwind-float', 'onwind'])
+])
+
+de_ror_generator_grouper = make_grouper('de_ror_generator_grouper', [
+  getDeIndexes('Generator', ['ror'])
+])
+
+de_co2_generator_grouper = make_grouper('de_co2_generator_grouper', [
+   getDeIndexes('Link', ['OCGT', 'urban central solid biomass CHP', 'urban central CHP', 'geothermal organic rankine cycle'])
+])
+
 
 def de_generator_grouper(n,c):
   if ( c == 'Generator'):
     df = n.df(c)
     index =  df[((df.index.str.startswith('DE0')) & (df['carrier'] == 'nuclear')) 
-              # | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'gas')) 
-              # | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'biogas')) |
-              | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'urban central solid biomass CHP'))
               | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'offwind-ac')) 
               | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'offwind-dc')) 
               | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'offwind-float')) 
@@ -312,6 +345,7 @@ def de_elec_use_grouper(n,c):
                           getIndexDeCarrier(df, 'urban decentral resistive heater') |
                           getIndexDeCarrier(df, 'urban decentral resistive heater') |
                           getIndexDeCarrier(df, 'DAC') 
+
                           )
   return getEmptyIndex()
 pypsa.statistics.groupers.add_grouper('de_elec_use_grouper', de_elec_use_grouper)
@@ -346,24 +380,29 @@ grouperMap['de_dsm_grouper'] = de_dsm_grouper
   
 
 
-
+# section h2 grouper
 de_h2_FC_grouper = make_grouper('de_h2_FC_grouper',[('Link', lambda df: 
                        getIndexDeCarrier(df, 'H2 Fuel Cell'))])
 de_h2_turbine_grouper = make_grouper('de_h2_turbine_grouper',[('Link', lambda df: 
                        getIndexDeCarrier(df, 'H2 turbine'))])
+de_h2_dispatch_grouper = make_grouper('de_h2_d_grouper',[
+  getDeIndexes('Link', ['H2 Fuel Cell', 'H2 turbine'])])
 de_h2_store_grouper = make_grouper('de_h2_store_grouper',[('Store', lambda df: 
                        getIndexDeCarrier(df, 'H2 Store'))])
 de_h2_Electrolysis_grouper = make_grouper('de_h2_Electrolysis_grouper',[('Link', lambda df: 
                        getIndexDeCarrier(df, 'H2 Electrolysis'))])
-de_h2_dispatch_grouper = make_grouper('de_h2_dispatch_grouper',[('Link', lambda df: 
-                       (getIndexDeCarrier(df, 'H2 Fuel Cell') | getIndexDeCarrier(df, 'H2 turbine')))])
 
-de_h2_d_grouper = make_grouper('de_h2_d_grouper', )
-de_h2_load_grouper = make_grouper('de_h2_load_grouper',[('Load', lambda df: 
-                       (getIndexDeCarrier(df, 'H2 for industry')))])
+de_h2_use_grouper = make_grouper('de_h2_load_grouper',[
+   getDeIndexes('Load', ['H2 for industry']),
+   getDeIndexes('Link', ['Sabatier', 'methanolisation', 'Fischer-Tropsch']),
+   ])
+de_import_h2_grouper = make_grouper('de_import_h2_grouper', [
+  'Link', lambda df: getIndexDeImportCarrier(df, 'H2 pipeline')
+  ])
+de_export_h2_grouper = make_grouper('de_export_h2_grouper', [
+  'Link', lambda df: getIndexDeExportCarrier(df, 'H2 pipeline')
+  ])
 
-de_h2_store_grouper = make_grouper('de_h2_load_grouper',[('Store', lambda df: 
-                       (getIndexDeCarrier(df, 'H2 Store')))])
 
 
 
