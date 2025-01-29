@@ -1405,8 +1405,8 @@ def add_storage_and_grids(n, costs):
             efficiency=costs.at["OCGT", "efficiency"],
             capital_cost=costs.at["OCGT", "fixed"]
             * costs.at["OCGT", "efficiency"]
-            * options["H2_turbine_FOM_Ratio"],  # NB: fixed cost is per MWel
-            marginal_cost=costs.at["OCGT", "VOM"] * options["H2_turbine_VOM_Ratio"],
+            * options.get("H2_turbine_FOM_Ratio",1),  # NB: fixed cost is per MWel
+            marginal_cost=costs.at["OCGT", "VOM"] * options.get("H2_turbine_VOM_Ratio",1),
             lifetime=costs.at["OCGT", "lifetime"],
         )
 
@@ -2695,13 +2695,13 @@ def add_biomass(n, costs):
         carrier="solid biomass",
         unit="MWh_LHV",
     )
-
+  
     n.add(
         "Generator",
         spatial.gas.biogas,
         bus=spatial.gas.biogas,
         carrier="biogas",
-        p_nom=biogas_potentials_spatial,
+        p_nom= biogas_potentials_spatial if options.get('biogas_enable', True) else 0,
         marginal_cost=costs.at["biogas", "fuel"],
         e_sum_min=0,
         e_sum_max=biogas_potentials_spatial,
