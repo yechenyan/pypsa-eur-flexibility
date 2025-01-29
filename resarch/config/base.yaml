@@ -140,3 +140,7 @@ sector:
   tes: false
   biogas_enable: false
   battery_enable: false
+  biomass_boiler: false
+  chp:
+    fuel:
+    - gas

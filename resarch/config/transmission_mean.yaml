@@ -1,0 +1,24 @@
+run:
+  flex_tag: transmission_mean
+  prefix: scenario
+  name: current
+
+scenario:
+  ll:
+  - c1.2
+
+transmission_projects:
+  enable: true
+
+lines:
+  max_extension: 20000 #MW
+  length_factor: 1.5
+  under_construction: 'keep'
+
+links:
+  max_extension: 30000 #MW
+  length_factor: 1.5
+  under_construction: 'keep'
+
+electricity:
+  transmission_limit: 'c1.2'

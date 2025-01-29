@@ -1,0 +1,9 @@
+run:
+  flex_tag: geothermal_mean
+  prefix: scenario
+  name: current
+
+sector:
+  enhanced_geothermal:
+    enable: true
+    var_cf: false
