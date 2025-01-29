@@ -12,13 +12,12 @@ snakemake -call all --configfile work/base/de27Node2045.yaml --cores all
 snakemake -call all --configfile config/config.yaml --cores all
 
 
-snakemake prepare_sector_networks --configfile work/scenario/biogas_mean.yaml --cores all
+snakemake prepare_sector_networks --configfile resarch/config/geothermal_test.yaml --cores all
 
 
 // scenario
-snakemake -call all --configfile work/scenario/biogas_best.yaml --cores all
 
-snakemake -call make_summary --configfile work/scenario/biogas_mean.yaml --cores all
+snakemake -call all --configfile resarch/config/geothermal_test.yaml --cores all
 
 
 

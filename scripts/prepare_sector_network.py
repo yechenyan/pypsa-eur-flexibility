@@ -4485,11 +4485,6 @@ def add_enhanced_geothermal(n, egs_potentials, egs_overlap, costs):
         p_nom_extendable=True,
     )
 
-    print('mx--------------------mx')
-    print(spatial.geothermal_heat.nodes)
-    print('mx--------------------mx')
-    raise ValueError('stop')
-
     if egs_config["var_cf"]:
         efficiency = pd.read_csv(
             snakemake.input.egs_capacity_factors, parse_dates=True, index_col=0
