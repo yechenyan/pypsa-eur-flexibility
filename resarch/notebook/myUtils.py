@@ -25,11 +25,17 @@ def getDeExport (df):
 def getDeImport (df):
   return (~(df['bus0'].str.startswith('DE0'))) & (df['bus1'].str.startswith('DE0'))
 
+def getDeInner (df):
+  return (df['bus0'].str.startswith('DE0')) & (df['bus1'].str.startswith('DE0'))
+
 def getTheCarrier (df , carrier):
   return (df['carrier'] == carrier)
 
 def getIndexDeCarrier (df , carrier):
   return getIndexDe(df) & getTheCarrier(df, carrier)
+
+def getIndexDeInnerCarrier (df , carrier):
+  return getDeInner(df) & getTheCarrier(df, carrier)
 
 def getIndexDeExportCarrier (df, carrier):
   return getDeExport(df) & getTheCarrier(df, carrier)
@@ -352,6 +358,14 @@ def de_elec_use_grouper(n,c):
 
                           )
   return getEmptyIndex()
+
+de_elec_distrbution_use_grouper = make_grouper('de_elec_distrbution_use_grouper', [
+    getDeIndexes('Link', ['electricity distribution grid'])
+  ])
+
+de_elec_methanol_use = make_grouper('de_elec_methanol_use', [
+  getDeIndexes('Link', ['methanolisation'])
+])
 pypsa.statistics.groupers.add_grouper('de_elec_use_grouper', de_elec_use_grouper)
 grouperMap['de_elec_use_grouper'] = de_elec_use_grouper
 
