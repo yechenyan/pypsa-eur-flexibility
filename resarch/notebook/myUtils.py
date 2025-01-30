@@ -266,12 +266,12 @@ def de_gas_generator_grouper(n,c):
     df = n.df(c)
     return getIndexSeries(df, getIndexDeCarrier(df, 'gas'))
   
-  if (c == 'Link'):
-    df = n.df(c)
-    return getIndexSeries(df, 
-                      getIndexDeCarrier(df, 'Sabatier') |
-                      getIndexDeCarrier(df, 'biogas to gas')
-                      )
+  # if (c == 'Link'):
+  #   df = n.df(c)
+  #   return getIndexSeries(df, 
+  #                     getIndexDeCarrier(df, 'Sabatier') |
+  #                     getIndexDeCarrier(df, 'biogas to gas')
+  #                     )
   return getEmptyIndex()
 grouperMap['de_gas_generator_grouper'] = de_gas_generator_grouper
 

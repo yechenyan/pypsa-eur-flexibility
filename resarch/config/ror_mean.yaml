@@ -9,4 +9,4 @@ electricity:
 
 renewable:
   hydrogen:
-  carriers: [hydro, ror]
+    carriers: [hydro, ror]

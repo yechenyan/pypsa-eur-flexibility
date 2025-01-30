@@ -4,6 +4,6 @@ run:
   name: current
 
 sector:
-  bsv_dsm: true
+  bev_dsm: true
   v2g: true
   bev_dsm_availability: 0.5
