@@ -4,7 +4,7 @@
 conda env list
 conda env remove --name pypsa-eur
 conda env create -f envs/environment.yaml
-conda activate pypsa-eur
+conda env create -f envs/macos-pinned.yaml
 
 
 snakemake -call all --configfile work/base/seprateEU.yaml --cores all
