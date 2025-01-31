@@ -1,5 +1,5 @@
 run:
-  flex_tag: biogas_good
+  flex_tag: biogas_great
   prefix: scenario
   name: current
 
@@ -13,10 +13,10 @@ sector:
 costs:
   override:
     biogas:
-      fuel: 49.94
-      lifetime: 24
-      investment: 878.33
+      fuel: 31.22
+      lifetime: 30
+      investment: 548.95
     biogas upgrading:
-      VOM: 3.54
-      lifetime: 24
-      investment: 104.63
+      VOM: 2.21
+      lifetime: 30
+      investment: 65.39
