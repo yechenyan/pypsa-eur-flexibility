@@ -34,6 +34,9 @@ costs:
     hydrogen storage underground:
       investment: 1.2699
       lifetime: 110
+    hydrogen storage tank type 1 including compressor:
+      investment:  22.2227
+      lifetime: 33
     H2 (g) pipeline repurposed:
       FOM: 1.5
       investment: 103.57456
