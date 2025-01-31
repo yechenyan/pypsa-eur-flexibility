@@ -52,7 +52,8 @@ def make_grouper(name, items):
         df = n.df(c)
         return getIndexSeries(df,itemFun(df))
       return getEmptyIndex()
-  grouperMap[name] = process_grouper
+  if name != '':
+    grouperMap[name] = process_grouper
   return process_grouper
 
 def getDeIndexes (component,  carriers):
@@ -67,7 +68,30 @@ def getDeIndexes (component,  carriers):
       series_list.append(getIndexDeCarrier(df, carrier))
 
     result = reduce(lambda x, y: x | y, series_list)
+    return result
 
+  return [component, getIndexes] 
+
+def getDeImportIndexes (component,  carriers):
+  def getIndexes (df):
+    series_list = []
+
+    for carrier in carriers:
+      series_list.append(getIndexDeImportCarrier(df, carrier))
+
+    result = reduce(lambda x, y: x | y, series_list)
+    return result
+
+  return [component, getIndexes] 
+
+def getDeExportIndexes (component,  carriers):
+  def getIndexes (df):
+    series_list = []
+
+    for carrier in carriers:
+      series_list.append(getIndexDeExportCarrier(df, carrier))
+
+    result = reduce(lambda x, y: x | y, series_list)
     return result
 
   return [component, getIndexes] 
@@ -261,19 +285,57 @@ def de_biogas_generator_grouper(n, c):
   return getEmptyIndex()
 grouperMap['de_biogas_generator_grouper'] = de_biogas_generator_grouper
 
+
+de_gas_generator = make_grouper('de_gas_generator', [
+  getDeIndexes('Generator', ['gas'])
+])
+de_sabatier = make_grouper('de_sabatier_generator', [
+  getDeIndexes('Link', ['Sabatier'])
+])
+de_biogas_to_gas = make_grouper('', [
+  getDeIndexes('Link', ['biogas to gas'])
+])
+de_gas_pipeline_import = make_grouper('de_sabatier_link', [
+  getDeImportIndexes('Link', ['gas pipeline'])
+])
+de_gas_use = make_grouper('de_gas_use', [
+  getDeIndexes('Link', ['OCGT', 'SMR CC', 'SMR', 'urban central gas boiler','urban central CHP', 'urban central CHP CC','gas for industry', 'gas for industry CC', 'rural gas boiler','urban decentral gas boiler'])
+])
+de_gas_pipeline_export = make_grouper('de_gas_pipeline_export', [
+  getDeExportIndexes('Link', ['gas pipeline'])
+])
+
+
 def de_gas_generator_grouper(n,c):
-  if (c =='Generator'):
-    df = n.df(c)
-    return getIndexSeries(df, getIndexDeCarrier(df, 'gas'))
-  
-  # if (c == 'Link'):
+  # if (c =='Generator'):
   #   df = n.df(c)
-  #   return getIndexSeries(df, 
-  #                     getIndexDeCarrier(df, 'Sabatier') |
-  #                     getIndexDeCarrier(df, 'biogas to gas')
-  #                     )
+  #   return getIndexSeries(df, getIndexDeCarrier(df, 'gas'))
+  
+  if (c == 'Link'):
+    df = n.df(c)
+    return getIndexSeries(df, 
+                      getIndexDeCarrier(df, 'Sabatier') 
+                      # getIndexDeCarrier(df, 'biogas to gas')# |
+                      # getIndexDeImportCarrier(df, 'gas pipeline') 
+                      )
   return getEmptyIndex()
+
 grouperMap['de_gas_generator_grouper'] = de_gas_generator_grouper
+
+def de_gas_use_grouper(n,c):
+  if (c == 'Link'):
+    df = n.df(c)
+    return getIndexSeries(df, 
+                      getIndexDeCarrier(df, 'OCGT') |
+                      getIndexDeCarrier(df, 'SMR') |
+                      getIndexDeCarrier(df, 'urban central gas boiler') |
+                      getIndexDeCarrier(df, 'urban central CHP') |
+                      getIndexDeCarrier(df, 'urban central CHP') |
+                      getIndexDeCarrier(df, 'rural gas boiler') |
+                      getIndexDeCarrier(df, 'urban decentral gas boiler') 
+                      )
+  return getEmptyIndex()
+grouperMap['de_gas_use_grouper'] = de_gas_use_grouper
 
 def de_phs_grouper(n, c):
   if (c == "StorageUnit"):
