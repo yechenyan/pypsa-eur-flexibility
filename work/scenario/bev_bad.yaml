@@ -4,6 +4,6 @@ run:
   name: bev
 
 sector:
-  bsv_dsm: false
+  bev_dsm: false
   v2g: false
     
