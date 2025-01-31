@@ -8,5 +8,5 @@ electricity:
     Generator: [solar, solar-hsat, onwind, offwind-ac, offwind-dc, offwind-float, OCGT, CCGT, ror]
 
 renewable:
-  hydrogen:
+  hydro:
     carriers: [hydro, ror]
