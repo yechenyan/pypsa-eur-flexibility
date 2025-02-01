@@ -13,5 +13,6 @@ renewable:
 
 costs:
   override:
-    investment: 2729.78128
-    lifetime: 89
+    ror:
+      investment: 2729.78128
+      lifetime: 89
