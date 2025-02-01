@@ -21,4 +21,4 @@ links:
   under_construction: 'keep'
 
 electricity:
-  transmission_limit: 'c1.25'
+  transmission_limit: 'c1.2'
