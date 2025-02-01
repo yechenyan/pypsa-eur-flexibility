@@ -1,5 +1,5 @@
 run:
-  flex_tag: transmission_mean
+  flex_tag: transmission_good
   prefix: scenario
   name: current
 
