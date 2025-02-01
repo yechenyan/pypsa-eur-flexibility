@@ -52,3 +52,6 @@ sector:
     fuel:
     - gas
     - solid biomass
+  enhanced_geothermal:
+    enable: true
+    var_cf: true  

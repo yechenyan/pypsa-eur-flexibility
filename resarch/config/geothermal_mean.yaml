@@ -6,4 +6,17 @@ run:
 sector:
   enhanced_geothermal:
     enable: true
-    var_cf: false
+    var_cf: true
+
+costs:
+  override:
+    biomass boiler:
+      efficiency: 0.93
+      lifetime: 22
+      investment: 510.35584
+      pelletizing cost: 7.2
+    biogas upgrading:
+      VOM: 3.93384
+      FOM: 2.8555
+      lifetime: 27.5
+      investment: 3869.25376
