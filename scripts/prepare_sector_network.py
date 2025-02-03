@@ -4544,6 +4544,7 @@ def add_enhanced_geothermal(n, egs_potentials, egs_overlap, costs):
         bus1 = pd.Series(f"{bus} geothermal heat surface", well_name)
 
         # adding geothermal wells as multiple generators to represent supply curve
+        
         n.add(
             "Link",
             well_name,
@@ -4552,7 +4553,7 @@ def add_enhanced_geothermal(n, egs_potentials, egs_overlap, costs):
             carrier="geothermal heat",
             p_nom_extendable=True,
             p_nom_max=p_nom_max.set_axis(well_name) / efficiency_orc,
-            capital_cost=capital_cost.set_axis(well_name) * efficiency_orc,
+            capital_cost=capital_cost.set_axis(well_name) * efficiency_orc * options["enhanced_geothermal"].get('capital_factor', 0.1),
             efficiency=bus_eta.loc[n.snapshots],
             lifetime=costs.at["geothermal", "lifetime"],
         )

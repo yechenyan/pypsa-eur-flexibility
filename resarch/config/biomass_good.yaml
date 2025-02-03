@@ -19,7 +19,6 @@ costs:
       investment: 510.35584
       pelletizing cost: 7.2
     biogas upgrading:
-      VOM: 3.93384
-      FOM: 2.8555
+      VOM: 1.7776
       lifetime: 27.5
-      investment: 3869.25376
+      investment: 2528.5159

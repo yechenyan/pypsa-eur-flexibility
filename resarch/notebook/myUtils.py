@@ -217,12 +217,40 @@ de_geothermal_generator_grouper = make_grouper('de_geothermal_generator_grouper'
   getDeIndexes('Link', ['geothermal organic rankine cycle'])
 ])
 
+def de_all_generator_grouper(n,c):
+  if ( c == 'Generator'):
+    df = n.df(c)
+    index =  df[ 
+              ((df.index.str.startswith('DE0')) & (df['carrier'] == 'offwind-ac')) 
+              | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'offwind-dc')) 
+              | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'offwind-float')) 
+              | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'onwind')) 
+              | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'ror')) 
+              | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'solar')) 
+              | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'solar rooftop')) 
+              | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'solar-hsat'))
+            ].index.to_series()
+    return index
+  
+  if ( c == 'Link'):
+    df = n.df(c)
+    index =  df[((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'OCGT')) |
+              ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'H2 Fuel Cell')) |
+              ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'H2 turbine')) |
+              ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'urban central solid biomass CHP')) |
+             ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'urban central CHP'))   |
+              ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'geothermal organic rankine cycle')) 
+              ].index.to_series()
+    return index
+  return getEmptyIndex()
+grouperMap['de_all_generator_grouper'] = de_all_generator_grouper
+
 
 def de_generator_grouper(n,c):
   if ( c == 'Generator'):
     df = n.df(c)
-    index =  df[((df.index.str.startswith('DE0')) & (df['carrier'] == 'nuclear')) 
-              | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'offwind-ac')) 
+    index =  df[
+              ((df.index.str.startswith('DE0')) & (df['carrier'] == 'offwind-ac')) 
               | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'offwind-dc')) 
               | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'offwind-float')) 
               | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'onwind')) 
@@ -238,9 +266,9 @@ def de_generator_grouper(n,c):
     index =  df[((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'OCGT')) |
               # ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'H2 Fuel Cell')) |
               # ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'H2 turbine')) |
-              ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'urban central solid biomass CHP')) |
-              ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'urban central CHP')) |
-              ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'geothermal organic rankine cycle')) 
+              # ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'urban central solid biomass CHP')) |
+             ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'urban central CHP'))   
+              # ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'geothermal organic rankine cycle')) 
               ].index.to_series()
     return index
   return getEmptyIndex()
@@ -286,6 +314,7 @@ def de_biogas_generator_grouper(n, c):
 grouperMap['de_biogas_generator_grouper'] = de_biogas_generator_grouper
 
 
+# gas start
 de_gas_generator = make_grouper('de_gas_generator', [
   getDeIndexes('Generator', ['gas'])
 ])
@@ -301,6 +330,44 @@ de_gas_pipeline_import = make_grouper('de_sabatier_link', [
 de_gas_use = make_grouper('de_gas_use', [
   getDeIndexes('Link', ['OCGT', 'SMR CC', 'SMR', 'urban central gas boiler','urban central CHP', 'urban central CHP CC','gas for industry', 'gas for industry CC', 'rural gas boiler','urban decentral gas boiler'])
 ])
+de_gas_use_elc = make_grouper('de_gas_use', [
+  getDeIndexes('Link', ['OCGT','urban central CHP CC',])
+])
+
+de_gas_use_warm = make_grouper('de_gas_use', [
+  getDeIndexes('Link', [ 'urban central gas boiler','urban central CHP', 'urban central CHP CC', 'rural gas boiler','urban decentral gas boiler'])
+])
+
+de_gas_use_SMR = make_grouper('de_gas_use', [
+  getDeIndexes('Link', ['SMR CC', 'SMR', 'gas for industry', 'gas for industry CC'])
+])
+# gas end
+
+# biomass start
+de_biomass_chp =  make_grouper('de_biomass_chp', [
+  getDeIndexes('Link', ['urban central solid biomass CHP'])
+])
+# biomass end
+
+
+# battery start
+de_battery_store =  make_grouper('de_battery_store', [
+  getDeIndexes('Store', ['battery'])
+])
+de_home_battery_store =  make_grouper('de_home_battery_store', [
+  getDeIndexes('Store', ['home battery'])
+])
+
+de_battery_discharger = make_grouper('de_battery_discharger', [
+  getDeIndexes('Link', ['battery charger'])
+])
+
+de_home_battery_discharger = make_grouper('de_home_battery_discharger', [
+  getDeIndexes('Link', ['home battery discharger'])
+])
+
+# battery end
+
 de_gas_pipeline_export = make_grouper('de_gas_pipeline_export', [
   getDeExportIndexes('Link', ['gas pipeline'])
 ])
@@ -457,7 +524,10 @@ def de_dsm_grouper(n, c):
       )
   return getEmptyIndex()
 grouperMap['de_dsm_grouper'] = de_dsm_grouper
-  
+
+# secthion bev grouper
+de_v2g = make_grouper('de_v2g', [getDeIndexes('Link', ['V2G'])])
+de_ev_battery = make_grouper('de_ev_battery', [getDeIndexes('Store', ['EV battery'])])
 
 
 # section h2 grouper
@@ -472,17 +542,32 @@ de_h2_store_grouper = make_grouper('de_h2_store_grouper',[('Store', lambda df:
 de_h2_Electrolysis_grouper = make_grouper('de_h2_Electrolysis_grouper',[('Link', lambda df: 
                        getIndexDeCarrier(df, 'H2 Electrolysis'))])
 
+de_h2_SMR_grouper = make_grouper('de_h2_SMR_grouper', [getDeIndexes('Link', ['H2 Electrolysis'])])
+
 de_h2_use_grouper = make_grouper('de_h2_load_grouper',[
-   getDeIndexes('Load', ['H2 for industry']),
-   getDeIndexes('Link', ['Sabatier', 'methanolisation', 'Fischer-Tropsch']),
+  #  getDeIndexes('Load', ['H2 for industry']),
+   getDeIndexes('Link', ['Sabatier', 'methanolisation']),
+   ])
+
+de_h2_FT_grouper = make_grouper('de_h2_FT_grouper',[
+  #  getDeIndexes('Load', ['H2 for industry']),
+   getDeIndexes('Link', ['Fischer-Tropsch']),
+   ])
+
+de_h2_industry_grouper = make_grouper('de_h2_industry_grouper',[
+    getDeIndexes('Load', ['H2 for industry']),
    ])
 de_import_h2_grouper = make_grouper('de_import_h2_grouper', [
-  'Link', lambda df: getIndexDeImportCarrier(df, 'H2 pipeline')
+  getDeImportIndexes('Link', ['H2 pipeline'])
   ])
 de_export_h2_grouper = make_grouper('de_export_h2_grouper', [
-  'Link', lambda df: getIndexDeExportCarrier(df, 'H2 pipeline')
+  getDeExportIndexes('Link', ['H2 pipeline'])
   ])
 
+# section ror
+de_ror_grouper = make_grouper('de_import_h2_grouper', [
+  getDeImportIndexes('Link', ['H2 pipeline'])
+  ])
 
 
 
@@ -502,7 +587,8 @@ def dataframe_to_table(df):
         formatted_elements.append(f'[{index}]')
         for item in row:
             if isinstance(item, float):
-                formatted_elements.append(f'[{item:.3f}]')  
+                formatted_number = f'{item:.3f}'.replace('.', ',')
+                formatted_elements.append(f'[{formatted_number}]') 
             else:
                 formatted_elements.append(f'[{item}]')
         formatted_row = ', '.join(formatted_elements)
@@ -514,8 +600,6 @@ def assignGrouper (pypsa):
     pypsa.statistics.groupers.add_grouper(kye, value)
 assignGrouper(pypsa)
 
-def hi():
-  print('hi4')
 
 def renameHeatCarrier (df):
   df.rename(index={'geothermal district heat': 'Geothermie'}, inplace=True)
