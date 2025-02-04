@@ -8,8 +8,8 @@ scenario:
   ll:
   - c1.2
 
-transmission_projects:
-  enable: true
+# transmission_projects:
+#   enable: true
 
 lines:
   max_extension: 20000 #MW

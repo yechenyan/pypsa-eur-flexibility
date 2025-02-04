@@ -210,7 +210,11 @@ de_ror_generator_grouper = make_grouper('de_ror_generator_grouper', [
 ])
 
 de_co2_generator_grouper = make_grouper('de_co2_generator_grouper', [
-   getDeIndexes('Link', ['OCGT', 'urban central solid biomass CHP', 'urban central CHP'])
+   getDeIndexes('Link', ['OCGT','OCCT', 'urban central CHP'])
+])
+
+de_biomass_generator_grouper = make_grouper('de_co2_generator_grouper', [
+   getDeIndexes('Link', ['urban central solid biomass CHP'])
 ])
 
 de_geothermal_generator_grouper = make_grouper('de_geothermal_generator_grouper', [
