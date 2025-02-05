@@ -3,6 +3,14 @@ SPDX-FileCopyrightText: Contributors to PyPSA-Eur <https://github.com/pypsa/pyps
 SPDX-License-Identifier: CC-BY-4.0
 -->
 
+# pypsa-eur-flexibility
+Here is the energy model used in the paper "Einfluss von Flexibilitätseinsätzen auf das deutsche Stromnetz der Zukunft – Analyse von Auswirkungen verschiedener Kosten- und Technologieentwicklungen", along with the data processing involved.
+
+This repository is a fork of PyPSA-EUR. Apart from the addition of the `research` folder, the rest of the file structure is consistent with PyPSA-EUR, and the operation method remains the same. Modifications have been made to certain aspects of PyPSA-EUR.
+
+The configuration files for running various scenarios can be found in `/research/config`. Data analysis of the model's results is available in `/research/notebook`.
+
+
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/pypsa/pypsa-eur?include_prereleases)
 [![Test workflows](https://github.com/pypsa/pypsa-eur/actions/workflows/test.yaml/badge.svg)](https://github.com/pypsa/pypsa-eur/actions/workflows/test.yaml)
 [![Documentation](https://readthedocs.org/projects/pypsa-eur/badge/?version=latest)](https://pypsa-eur.readthedocs.io/en/latest/?badge=latest)
