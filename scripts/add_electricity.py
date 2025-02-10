@@ -360,6 +360,7 @@ def attach_load(
 
 
 def set_transmission_costs(
+    config,
     n: pypsa.Network,
     costs: pd.DataFrame,
     line_length_factor: float = 1.0,
@@ -370,6 +371,8 @@ def set_transmission_costs(
         * line_length_factor
         * costs.at["HVAC overhead", "capital_cost"]
     )
+
+    n.lines["capital_cost"] = n.lines["capital_cost"] * config['lines'].get('capital_cost_factor', 1)
 
     if n.links.empty:
         return
@@ -393,6 +396,7 @@ def set_transmission_costs(
         + costs.at["HVDC inverter pair", "capital_cost"]
     )
     n.links.loc[dc_b, "capital_cost"] = costs
+    n.links.loc[dc_b, "capital_cost"] = n.links.loc[dc_b, "capital_cost"] * config['links'].get('capital_cost_factor', 1)
 
 
 def attach_wind_and_solar(
@@ -946,6 +950,7 @@ if __name__ == "__main__":
     )
 
     set_transmission_costs(
+        snakemake.config,
         n,
         costs,
         params.line_length_factor,

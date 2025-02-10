@@ -7,18 +7,32 @@ scenario:
   ll:
   - copt
 
-transmission_projects:
-  enable: true
-
 lines:
   max_extension: 20000 #MW
   length_factor: 1.5
   under_construction: 'keep'
+  capital_cost_factor: 0.5
 
 links:
   max_extension: 30000 #MW
   length_factor: 1.5
   under_construction: 'keep'
+  capital_cost_factor: 0.5
 
 electricity:
   transmission_limit: 'copt'
+
+# costs:
+#   override:
+#     HVAC overhead:
+#       investment: 221.0707
+#       lifetime: 52
+#     HVDC overhead:
+#       investment: 221.0707
+#       lifetime: 52
+#     HVDC submarin:
+#       investment: 504.1467
+#       lifetime: 52
+#     HVDC inverter pair:
+#       investment: 82901.5199
+#       lifetime: 52

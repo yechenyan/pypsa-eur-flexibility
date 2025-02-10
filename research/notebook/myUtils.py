@@ -258,7 +258,7 @@ def de_generator_grouper(n,c):
               | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'offwind-dc')) 
               | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'offwind-float')) 
               | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'onwind')) 
-              | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'ror')) 
+              # | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'ror')) 
               | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'solar')) 
               | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'solar rooftop')) 
               | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'solar-hsat'))
@@ -487,10 +487,29 @@ def de_elec_use_grouper(n,c):
                           getIndexDeCarrier(df, 'urban decentral air heat pump') |
                           getIndexDeCarrier(df, 'urban decentral resistive heater') |
                           getIndexDeCarrier(df, 'urban decentral resistive heater') |
-                          getIndexDeCarrier(df, 'DAC') 
-
+                          getIndexDeCarrier(df, 'DAC')
                           )
   return getEmptyIndex()
+grouperMap['de_elec_use_grouper'] = de_elec_use_grouper
+
+def de_warm_link(n, c):
+  if (c == 'Link'):
+  
+    df = n.df(c)
+    return getIndexSeries(df,
+                          getIndexDeCarrier(df, 'urban central air heat pump') |
+                          getIndexDeCarrier(df, 'urban central resistive heater') |
+                          getIndexDeCarrier(df, 'rural air heat pump') |
+                          getIndexDeCarrier(df, 'rural ground heat pump') |
+                          getIndexDeCarrier(df, 'rural resistive heater') |
+                          getIndexDeCarrier(df, 'urban decentral air heat pump') |
+                          getIndexDeCarrier(df, 'urban decentral resistive heater') |
+                          getIndexDeCarrier(df, 'DAC')
+                          )
+  return getEmptyIndex()
+grouperMap['de_warm_link'] = de_warm_link
+
+
 
 de_elec_distrbution_use_grouper = make_grouper('de_elec_distrbution_use_grouper', [
     getDeIndexes('Link', ['electricity distribution grid'])
@@ -499,8 +518,6 @@ de_elec_distrbution_use_grouper = make_grouper('de_elec_distrbution_use_grouper'
 de_elec_methanol_use = make_grouper('de_elec_methanol_use', [
   getDeIndexes('Link', ['methanolisation'])
 ])
-pypsa.statistics.groupers.add_grouper('de_elec_use_grouper', de_elec_use_grouper)
-grouperMap['de_elec_use_grouper'] = de_elec_use_grouper
 
 
 def de_elec_charge_grouper(n, c):
@@ -569,8 +586,8 @@ de_export_h2_grouper = make_grouper('de_export_h2_grouper', [
   ])
 
 # section ror
-de_ror_grouper = make_grouper('de_import_h2_grouper', [
-  getDeImportIndexes('Link', ['H2 pipeline'])
+de_ror_grouper = make_grouper('de_ror_grouper', [
+  getDeImportIndexes('Generator', ['ror'])
   ])
 
 
@@ -591,7 +608,7 @@ def dataframe_to_table(df):
         formatted_elements.append(f'[{index}]')
         for item in row:
             if isinstance(item, float):
-                formatted_number = f'{item:.3f}'.replace('.', ',')
+                formatted_number = f'{item:.2f}'.replace('.', ',')
                 formatted_elements.append(f'[{formatted_number}]') 
             else:
                 formatted_elements.append(f'[{item}]')

@@ -5,10 +5,7 @@ run:
 
 scenario:
   ll:
-  - c1.2
-
-transmission_projects:
-  enable: true
+  - copt
 
 lines:
   max_extension: 20000 #MW
@@ -21,4 +18,4 @@ links:
   under_construction: 'keep'
 
 electricity:
-  transmission_limit: 'c1.2'
+  transmission_limit: 'copt'

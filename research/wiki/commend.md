@@ -13,10 +13,11 @@ snakemake -call all --configfile work/base/de27Node2045.yaml --cores all
 snakemake -call all --configfile config/config.yaml --cores all
 
 
-snakemake prepare_sector_networks --configfile resarch/config/biomass_mean.yaml --cores all
+snakemake prepare_sector_networks --configfile research/config/transmission_mean.yaml --cores all
 
 
 // scenario
+snakemake -call all --configfile research/config/transmission_best.yaml --cores all
 
 snakemake -call all --configfile resarch/config/geothermal_test.yaml --cores all
 
