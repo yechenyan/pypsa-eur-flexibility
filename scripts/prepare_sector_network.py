@@ -19,6 +19,7 @@ import xarray as xr
 from _helpers import (
     configure_logging,
     get,
+    override_costs,
     set_scenario_config,
     update_config_from_wildcards,
 )
@@ -1077,6 +1078,7 @@ def cycling_shift(df, steps=1):
 def prepare_costs(cost_file, params, nyears):
     # set all asset costs and other parameters
     costs = pd.read_csv(cost_file, index_col=[0, 1]).sort_index()
+    costs = override_costs(costs, params)
 
     # correct units to MW and EUR
     costs.loc[costs.unit.str.contains("/kW"), "value"] *= 1e3
@@ -1279,41 +1281,43 @@ def insert_electricity_distribution_grid(n, costs):
         unit="MWh_el",
     )
 
-    n.add(
-        "Store",
-        nodes + " home battery",
-        bus=nodes + " home battery",
-        location=nodes,
-        e_cyclic=True,
-        e_nom_extendable=True,
-        carrier="home battery",
-        capital_cost=costs.at["home battery storage", "fixed"],
-        lifetime=costs.at["battery storage", "lifetime"],
-    )
+    if options.get("battery_enable", True):
+        n.add(
+            "Store",
+            nodes + " home battery",
+            bus=nodes + " home battery",
+            location=nodes,
+            e_cyclic=True,
+            e_nom_extendable=True,
+            carrier="home battery",
+            capital_cost=costs.at["home battery storage", "fixed"],
+            lifetime=costs.at["battery storage", "lifetime"],
+        )
 
-    n.add(
-        "Link",
-        nodes + " home battery charger",
-        bus0=nodes + " low voltage",
-        bus1=nodes + " home battery",
-        carrier="home battery charger",
-        efficiency=costs.at["battery inverter", "efficiency"] ** 0.5,
-        capital_cost=costs.at["home battery inverter", "fixed"],
-        p_nom_extendable=True,
-        lifetime=costs.at["battery inverter", "lifetime"],
-    )
+        n.add(
+            "Link",
+            nodes + " home battery charger",
+            bus0=nodes + " low voltage",
+            bus1=nodes + " home battery",
+            carrier="home battery charger",
+            efficiency=costs.at["battery inverter", "efficiency"] ** 0.5,
+            capital_cost=costs.at["home battery inverter", "fixed"],
+            p_nom_extendable=True,
+            lifetime=costs.at["battery inverter", "lifetime"],
+        )
 
-    n.add(
-        "Link",
-        nodes + " home battery discharger",
-        bus0=nodes + " home battery",
-        bus1=nodes + " low voltage",
-        carrier="home battery discharger",
-        efficiency=costs.at["battery inverter", "efficiency"] ** 0.5,
-        marginal_cost=options["marginal_cost_storage"],
-        p_nom_extendable=True,
-        lifetime=costs.at["battery inverter", "lifetime"],
-    )
+        n.add(
+            "Link",
+            nodes + " home battery discharger",
+            bus0=nodes + " home battery",
+            bus1=nodes + " low voltage",
+            carrier="home battery discharger",
+            efficiency=costs.at["battery inverter", "efficiency"] ** 0.5,
+            marginal_cost=options["marginal_cost_storage"],
+            p_nom_extendable=True,
+            lifetime=costs.at["battery inverter", "lifetime"],
+        )
+    
 
 
 def insert_gas_distribution_costs(n, costs):
@@ -1401,8 +1405,9 @@ def add_storage_and_grids(n, costs):
             carrier="H2 turbine",
             efficiency=costs.at["OCGT", "efficiency"],
             capital_cost=costs.at["OCGT", "fixed"]
-            * costs.at["OCGT", "efficiency"],  # NB: fixed cost is per MWel
-            marginal_cost=costs.at["OCGT", "VOM"],
+            * costs.at["OCGT", "efficiency"]
+            * options.get("H2_turbine_FOM_Ratio",1),  # NB: fixed cost is per MWel
+            marginal_cost=costs.at["OCGT", "VOM"] * options.get("H2_turbine_VOM_Ratio",1),
             lifetime=costs.at["OCGT", "lifetime"],
         )
 
@@ -1617,39 +1622,40 @@ def add_storage_and_grids(n, costs):
 
     n.add("Bus", nodes + " battery", location=nodes, carrier="battery", unit="MWh_el")
 
-    n.add(
-        "Store",
-        nodes + " battery",
-        bus=nodes + " battery",
-        e_cyclic=True,
-        e_nom_extendable=True,
-        carrier="battery",
-        capital_cost=costs.at["battery storage", "fixed"],
-        lifetime=costs.at["battery storage", "lifetime"],
-    )
+    if options.get("battery_enable", True):
+        n.add(
+            "Store",
+            nodes + " battery",
+            bus=nodes + " battery",
+            e_cyclic=True,
+            e_nom_extendable=True,
+            carrier="battery",
+            capital_cost=costs.at["battery storage", "fixed"],
+            lifetime=costs.at["battery storage", "lifetime"],
+        )
 
-    n.add(
-        "Link",
-        nodes + " battery charger",
-        bus0=nodes,
-        bus1=nodes + " battery",
-        carrier="battery charger",
-        efficiency=costs.at["battery inverter", "efficiency"] ** 0.5,
-        capital_cost=costs.at["battery inverter", "fixed"],
-        p_nom_extendable=True,
-        lifetime=costs.at["battery inverter", "lifetime"],
-    )
+        n.add(
+            "Link",
+            nodes + " battery charger",
+            bus0=nodes,
+            bus1=nodes + " battery",
+            carrier="battery charger",
+            efficiency=costs.at["battery inverter", "efficiency"] ** 0.5,
+            capital_cost=costs.at["battery inverter", "fixed"],
+            p_nom_extendable=True,
+            lifetime=costs.at["battery inverter", "lifetime"],
+        )
 
-    n.add(
-        "Link",
-        nodes + " battery discharger",
-        bus0=nodes + " battery",
-        bus1=nodes,
-        carrier="battery discharger",
-        efficiency=costs.at["battery inverter", "efficiency"] ** 0.5,
-        marginal_cost=options["marginal_cost_storage"],
-        p_nom_extendable=True,
-        lifetime=costs.at["battery inverter", "lifetime"],
+        n.add(
+            "Link",
+            nodes + " battery discharger",
+            bus0=nodes + " battery",
+            bus1=nodes,
+            carrier="battery discharger",
+            efficiency=costs.at["battery inverter", "efficiency"] ** 0.5,
+            marginal_cost=options["marginal_cost_storage"],
+            p_nom_extendable=True,
+            lifetime=costs.at["battery inverter", "lifetime"],
     )
 
     if options["methanation"]:
@@ -2687,13 +2693,13 @@ def add_biomass(n, costs):
         carrier="solid biomass",
         unit="MWh_LHV",
     )
-
+  
     n.add(
         "Generator",
         spatial.gas.biogas,
         bus=spatial.gas.biogas,
         carrier="biogas",
-        p_nom=biogas_potentials_spatial,
+        p_nom= biogas_potentials_spatial if options.get('biogas_enable', True) else 0,
         marginal_cost=costs.at["biogas", "fuel"],
         e_sum_min=0,
         e_sum_max=biogas_potentials_spatial,
@@ -4481,6 +4487,10 @@ def add_enhanced_geothermal(n, egs_potentials, egs_overlap, costs):
         efficiency = pd.read_csv(
             snakemake.input.egs_capacity_factors, parse_dates=True, index_col=0
         )
+        if snakemake.config["clustering"]["temporal"]["resolution_sector"]:
+            efficiency = efficiency.resample(
+                snakemake.config["clustering"]["temporal"]["resolution_sector"]
+            ).mean()
         logger.info("Adding Enhanced Geothermal with time-varying capacity factors.")
     else:
         efficiency = 1.0
@@ -4534,6 +4544,7 @@ def add_enhanced_geothermal(n, egs_potentials, egs_overlap, costs):
         bus1 = pd.Series(f"{bus} geothermal heat surface", well_name)
 
         # adding geothermal wells as multiple generators to represent supply curve
+        
         n.add(
             "Link",
             well_name,
@@ -4542,7 +4553,7 @@ def add_enhanced_geothermal(n, egs_potentials, egs_overlap, costs):
             carrier="geothermal heat",
             p_nom_extendable=True,
             p_nom_max=p_nom_max.set_axis(well_name) / efficiency_orc,
-            capital_cost=capital_cost.set_axis(well_name) * efficiency_orc,
+            capital_cost=capital_cost.set_axis(well_name) * efficiency_orc * options["enhanced_geothermal"].get('capital_factor', 0.1),
             efficiency=bus_eta.loc[n.snapshots],
             lifetime=costs.at["geothermal", "lifetime"],
         )

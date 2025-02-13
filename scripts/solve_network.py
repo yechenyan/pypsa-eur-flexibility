@@ -426,12 +426,16 @@ def prepare_network(
             #    t.df['capital_cost'] += 1e1 + 2.*(np.random.random(len(t.df)) - 0.5)
             if "marginal_cost" in t.df:
                 t.df["marginal_cost"] += 1e-2 + 2e-3 * (
-                    np.random.random(len(t.df)) - 0.5
+                    np.full(len(t.df), 0.5) - 0.5
+                    # np.random.random(len(t.df)) - 0.5
                 )
 
         for t in n.iterate_components(["Line", "Link"]):
             t.df["capital_cost"] += (
-                1e-1 + 2e-2 * (np.random.random(len(t.df)) - 0.5)
+                1e-1 + 2e-2 * (
+                    np.full(len(t.df), 0.5) - 0.5
+                    # np.random.random(len(t.df)) - 0.5
+                )
             ) * t.df["length"]
 
     if solve_opts.get("nhours"):
@@ -977,8 +981,8 @@ def extra_functionality(n, snapshots):
     else:
         add_co2_atmosphere_constraint(n, snapshots)
 
-    if config["sector"]["enhanced_geothermal"]["enable"]:
-        add_flexible_egs_constraint(n)
+    # if config["sector"]["enhanced_geothermal"]["enable"]:
+    #     add_flexible_egs_constraint(n)
 
     if n.params.custom_extra_functionality:
         source_path = n.params.custom_extra_functionality
