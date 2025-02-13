@@ -151,6 +151,18 @@ def de_grouper(n, c):
                       ].index.to_series()
     return indexsLink
 
+  if (c == 'Generator'):
+    dfLink = n.df(c)
+    indexsLink = dfLink[dfLink['bus'].str.startswith('DE0')]
+
+  if (c == 'Store'):
+    dfLink = n.df(c)
+    indexsLink = dfLink[dfLink['bus'].str.startswith('DE0')]
+
+  if (c == 'StorageUnit'):
+    dfLink = n.df(c)
+    indexsLink = dfLink[dfLink['bus'].str.startswith('DE0')]
+  
   df = n.df(c)
   return df[df.index.str.startswith('DE0')].index.to_series()
 grouperMap['de_grouper'] = de_grouper
@@ -258,7 +270,7 @@ def de_generator_grouper(n,c):
               | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'offwind-dc')) 
               | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'offwind-float')) 
               | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'onwind')) 
-              # | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'ror')) 
+              | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'ror')) 
               | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'solar')) 
               | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'solar rooftop')) 
               | ((df.index.str.startswith('DE0')) & (df['carrier'] == 'solar-hsat'))
@@ -268,11 +280,11 @@ def de_generator_grouper(n,c):
   if ( c == 'Link'):
     df = n.df(c)
     index =  df[((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'OCGT')) |
-              # ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'H2 Fuel Cell')) |
-              # ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'H2 turbine')) |
-              # ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'urban central solid biomass CHP')) |
-             ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'urban central CHP'))   
-              # ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'geothermal organic rankine cycle')) 
+              ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'H2 Fuel Cell')) |
+              ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'H2 turbine')) |
+              ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'urban central solid biomass CHP')) |
+             ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'urban central CHP'))  |
+              ((df['bus0'].str.startswith('DE0')) & (df['carrier'] == 'geothermal organic rankine cycle')) 
               ].index.to_series()
     return index
   return getEmptyIndex()
@@ -563,7 +575,7 @@ de_h2_store_grouper = make_grouper('de_h2_store_grouper',[('Store', lambda df:
 de_h2_Electrolysis_grouper = make_grouper('de_h2_Electrolysis_grouper',[('Link', lambda df: 
                        getIndexDeCarrier(df, 'H2 Electrolysis'))])
 
-de_h2_SMR_grouper = make_grouper('de_h2_SMR_grouper', [getDeIndexes('Link', ['H2 Electrolysis'])])
+de_h2_SMR_grouper = make_grouper('de_h2_SMR_grouper', [getDeIndexes('Link', ['SMR', 'SMR CC'])])
 
 de_h2_use_grouper = make_grouper('de_h2_load_grouper',[
   #  getDeIndexes('Load', ['H2 for industry']),
@@ -589,6 +601,33 @@ de_export_h2_grouper = make_grouper('de_export_h2_grouper', [
 de_ror_grouper = make_grouper('de_ror_grouper', [
   getDeImportIndexes('Generator', ['ror'])
   ])
+
+# sector biomass
+de_solid_biomass = make_grouper('de_solid_biomass', [
+  getDeIndexes('Generator', ['solid biomass'])
+])
+
+de_solid_biomass = make_grouper('de_solid_biomass', [
+  getDeIndexes('Generator', ['solid biomass'])
+])
+
+de_solid_biomass_chp = make_grouper('de_solid_biomass_chp', [
+  getDeIndexes('Link', ['urban central solid biomass CHP', 'urban central solid biomass CHP CC'])
+])
+
+de_solid_biomass_industry = make_grouper('de_solid_biomass_industry', [
+  getDeIndexes('Link', ['solid biomass for industry', 'solid biomass for industry CC'])
+])
+
+de_rural_biomass_boiler = make_grouper('de_rural_biomass_boiler', [
+    getDeIndexes('Link', ['rural biomass boiler'])
+])
+
+de_urban_decentral_biomass_boiler = make_grouper('de_rural_biomass_boiler', [
+    getDeIndexes('Link', ['urban decentral biomass boiler'])
+])
+
+
 
 
 

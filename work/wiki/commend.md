@@ -18,7 +18,7 @@ snakemake prepare_sector_networks --configfile config/config.yaml --cores all
 
 
 // scenario
-snakemake -call all --configfile work/scenario/biogas_best.yaml --cores all
+snakemake -call all --configfile work/scenario/.yaml --cores all
 
 snakemake -call make_summary --configfile work/scenario/biogas_mean.yaml --cores all
 

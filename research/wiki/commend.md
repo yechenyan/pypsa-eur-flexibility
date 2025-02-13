@@ -19,7 +19,7 @@ snakemake prepare_sector_networks --configfile research/config/transmission_mean
 // scenario
 snakemake -call all --configfile research/config/transmission_best.yaml --cores all
 
-snakemake -call all --configfile resarch/config/geothermal_test.yaml --cores all
+snakemake -call all --configfile research/config/h2_mean.yaml --cores all
 
 
 
