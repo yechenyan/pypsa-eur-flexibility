@@ -1,22 +1,18 @@
 run:
-  flex_tag: smart_base
-  prefix: smart
-  name: base
-
-foresight: myopic
+  flex_tag: base
+  prefix: scenario
+  name: current
 
 scenario:
   ll:
-  - c1.25
+  - c1
   clusters:
   - 27
   opts:
-  - 3H
+  - 6H
   sector_opts:
-  - 3H
+  - 6H
   planning_horizons:
-  - 2025
-  - 2035
   - 2045
 
 countries: ['AT', 'BE', 'CH', 'CZ', 'DE', 'DK', 'FR', 'GB', 'LU', 'NL', 'NO', 'PL', 'SE', 'ES', 'IT']
@@ -55,16 +51,16 @@ transmission_projects:
   enable: false
 
 lines:
-  max_extension: 20000
-  length_factor: 1.5
-  under_construction: 'keep'
+  max_extension: 0
+  length_factor: 2
+  under_construction: zero
   dynamic_line_rating:
     cutout: europe-2019-sarah3-era5
 
 links:
-  max_extension: 3000
-  length_factor: 1.5
-  under_construction: 'keep'
+  max_extension: 0
+  length_factor: 2
+  under_construction: zero
 
 co2_budget: 
   2020: 0.720 # average emissions of 2019 to 2021 relative to 1990, excl LULUCF, EEA data, European Environment Agency. (2023a). Annual European Union greenhouse gas inventory 1990–2021 and inventory report 2023 - CRF Table. https://unfccc.int/documents/627830
@@ -83,7 +79,7 @@ snapshots:
 electricity:
   estimate_renewable_capacities:
     year: 2019
-  transmission_limit: 'c1.25'
+  transmission_limit: 'c1'
 
   extendable_carriers:
     Storage: []
@@ -129,29 +125,24 @@ clustering:
     'IT': 0.1111
 
 sector:
-  h2_network: true
+  H2_network: true
   hydrogen_turbine: true
   hydrogen_fuel_cell: true
-  enhanced_geothermal:
-    enable: true
-    var_cf: true
   biomass_spatial: true
-  biomass_boiler: true
   co2_spatial: true
-  gas_network: true # may be wrong
+  gas_network: true
   methanol:
     regional_methanol_demand: true
   regional_oil_demand: true
   regional_coal_demand: true
   regional_nuclear_demand: true
   regional_oil_production: true
-  bev_dsm: true
-  v2g: true
-  tes: true
-  biogas_enable: true
-  battery_enable: true
-  h2_store_enable: true
+  bev_dsm: false
+  v2g: false
+  tes: false
+  biogas_enable: false
+  battery_enable: false
+  biomass_boiler: false
   chp:
     fuel:
     - gas
-    - solid biomass

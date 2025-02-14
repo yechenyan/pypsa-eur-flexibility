@@ -3,20 +3,16 @@ run:
   prefix: smart
   name: base
 
-foresight: myopic
-
 scenario:
   ll:
   - c1.25
   clusters:
   - 27
   opts:
-  - 3H
+  - 6H
   sector_opts:
-  - 3H
+  - 6H
   planning_horizons:
-  - 2025
-  - 2035
   - 2045
 
 countries: ['AT', 'BE', 'CH', 'CZ', 'DE', 'DK', 'FR', 'GB', 'LU', 'NL', 'NO', 'PL', 'SE', 'ES', 'IT']

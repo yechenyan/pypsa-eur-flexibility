@@ -21,6 +21,10 @@ snakemake -call all --configfile research/config/transmission_best.yaml --cores 
 
 snakemake -call all --configfile research/config/h2_mean.yaml --cores all
 
+// smart
+snakemake -call all --configfile research/config/smart/smart-flex.yaml --cores all
+
+
 
 
 ```
