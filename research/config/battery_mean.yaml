@@ -1,0 +1,12 @@
+run:
+  flex_tag: battery_mean
+  prefix: scenario
+  name: current
+
+electricity:
+  extendable_carriers:
+    Store: [battery]
+
+sector:
+  battery_enable: true
+    

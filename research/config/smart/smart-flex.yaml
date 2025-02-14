@@ -1,0 +1,25 @@
+run:
+  flex_tag: smart_flex
+  prefix: smart
+  name: current
+
+electricity:
+  extendable_carriers:
+    Store: [battery, H2]
+
+sector:
+  tes: true
+  battery_enable: true
+  h2_store_enable: true
+  bev_dsm_availability: 0.5
+  heat_pump_enable: true
+  v2g: true
+
+solving:
+  agg_p_nom_limits:
+    agg_offwind: false
+    include_existing: false
+    file: data/agg_p_nom_minmax.csv
+  
+  constraints: 
+    CCL: true

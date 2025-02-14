@@ -1,0 +1,12 @@
+run:
+  flex_tag: biomass_mean
+  prefix: scenario
+  name: current
+
+
+sector:
+  biomass_boiler: true
+  chp:
+    fuel:
+    - gas
+    - solid biomass
