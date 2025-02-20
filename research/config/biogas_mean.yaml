@@ -1,0 +1,11 @@
+run:
+  flex_tag: biogas_mean
+  prefix: scenario
+  name: current
+
+electricity:
+  extendable_carriers:
+    Generator: [solar, solar-hsat, onwind, offwind-ac, offwind-dc, offwind-float, OCGT, CCGT, biogas]
+ 
+sector:
+  biogas_enable: true

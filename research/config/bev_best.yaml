@@ -1,0 +1,9 @@
+run:
+  flex_tag: bev_mean
+  prefix: scenario
+  name: current
+
+sector:
+  bev_dsm: true
+  v2g: true
+  bev_dsm_availability: 0.9

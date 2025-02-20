@@ -1,0 +1,18 @@
+run:
+  flex_tag: ror_good
+  prefix: scenario
+  name: current
+
+electricity:
+  extendable_carriers:
+    Generator: [solar, solar-hsat, onwind, offwind-ac, offwind-dc, offwind-float, OCGT, CCGT, ror]
+
+renewable:
+  hydro:
+    carriers: [hydro, ror]
+
+costs:
+  override:
+    ror:
+      investment: 2729.78128
+      lifetime: 89
