@@ -3,7 +3,7 @@ run:
   prefix: smart
   name: base
 
-foresight: myopic
+# foresight: myopic
 
 scenario:
   ll:
@@ -15,8 +15,9 @@ scenario:
   sector_opts:
   - 3H
   planning_horizons:
-  - 2025
-  - 2035
+  # - 2030
+  # - 2035
+  # - 2040
   - 2045
 
 countries: ['AT', 'BE', 'CH', 'CZ', 'DE', 'DK', 'FR', 'GB', 'LU', 'NL', 'NO', 'PL', 'SE', 'ES', 'IT']
@@ -108,6 +109,22 @@ solving:
 
 costs:
   year: 2045
+  override:
+    # https://rmi.org/the-rise-of-batteries-in-six-charts-and-not-too-many-numbers/
+    home battery storage:
+      investment: 50
+    battery storage:
+      investment: 50
+    home battery inverter:
+      FOM: 0
+      efficiency: 0.96
+      investment: 39
+      lifetime: 20
+    battery inverter:
+      FOM: 0
+      efficiency: 0.96
+      investment: 39
+      lifetime: 20
 
 clustering:
   focus_weights:
@@ -155,3 +172,4 @@ sector:
     fuel:
     - gas
     - solid biomass
+

@@ -1273,15 +1273,17 @@ def insert_electricity_distribution_grid(n, costs):
 
     n.add("Carrier", "home battery")
 
-    n.add(
-        "Bus",
-        nodes + " home battery",
-        location=nodes,
-        carrier="home battery",
-        unit="MWh_el",
-    )
-
     if options.get("battery_enable", True):
+        
+
+        n.add(
+            "Bus",
+            nodes + " home battery",
+            location=nodes,
+            carrier="home battery",
+            unit="MWh_el",
+        )
+
         n.add(
             "Store",
             nodes + " home battery",

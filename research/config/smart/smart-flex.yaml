@@ -14,12 +14,16 @@ sector:
   bev_dsm_availability: 0.5
   heat_pump_enable: true
   v2g: true
+  bev_dsm: true
+  # bev_avail_max: 0.16
+  # bev_avail_mean: 0.08
+
 
 solving:
   agg_p_nom_limits:
-    agg_offwind: false
+    agg_offwind: true
     include_existing: false
-    file: data/agg_p_nom_minmax.csv
+    file: research/config/smart/agg_p_nom_minmax_2045.csv
   
   constraints: 
     CCL: true

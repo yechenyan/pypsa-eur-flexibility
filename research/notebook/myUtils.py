@@ -368,14 +368,14 @@ de_biomass_chp =  make_grouper('de_biomass_chp', [
 
 # battery start
 de_battery_store =  make_grouper('de_battery_store', [
-  getDeIndexes('Store', ['battery'])
+  getDeIndexes('Store', ['battery', "home battery"])
 ])
 de_home_battery_store =  make_grouper('de_home_battery_store', [
   getDeIndexes('Store', ['home battery'])
 ])
 
 de_battery_discharger = make_grouper('de_battery_discharger', [
-  getDeIndexes('Link', ['battery charger'])
+  getDeIndexes('Link', ['battery charger', 'home battery discharger'])
 ])
 
 de_home_battery_discharger = make_grouper('de_home_battery_discharger', [
@@ -647,7 +647,7 @@ def dataframe_to_table(df):
         formatted_elements.append(f'[{index}]')
         for item in row:
             if isinstance(item, float):
-                formatted_number = f'{item:.2f}'.replace('.', ',')
+                formatted_number = f'{item:.3f}'.replace('.', ',')
                 formatted_elements.append(f'[{formatted_number}]') 
             else:
                 formatted_elements.append(f'[{item}]')

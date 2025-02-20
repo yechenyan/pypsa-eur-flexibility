@@ -1398,7 +1398,8 @@ def add_storage_and_grids(n, costs):
         carrier="h2 import",
         p_nom_extendable=True,
         unit="MWh_LHV",
-        marginal_cost ="100"
+        marginal_cost ="100", #https://www.pv-magazine.com/2024/12/27/the-hydrogen-stream-bnef-forecasts-sharper-green-h2-price-drop-by-2050/
+        p_nom_max =112338.4400242506
     )
 
     n.add(
@@ -1409,7 +1410,20 @@ def add_storage_and_grids(n, costs):
         carrier="h2 import",
         p_nom_extendable=True,
         unit="MWh_LHV",
-        marginal_cost ="100"
+        marginal_cost ="90",
+        p_nom_max= 24623.7930697421
+    )
+
+    n.add(
+        "Generator",
+        "DE0 6 h2 import",
+        bus="DE0 6 H2",
+        location="DE0 4 H2",
+        carrier="h2 import",
+        p_nom_extendable=True,
+        unit="MWh_LHV",
+        marginal_cost ="90",
+        p_nom_max=76449.1164060485
     )
 
     if options["hydrogen_turbine"]:
@@ -1642,11 +1656,12 @@ def add_storage_and_grids(n, costs):
             lifetime=costs.at["H2 (g) pipeline", "lifetime"],
         )
 
-    n.add("Carrier", "battery")
-
-    n.add("Bus", nodes + " battery", location=nodes, carrier="battery", unit="MWh_el")
+        n.add("Carrier", "battery")
 
     if options.get("battery_enable", True):
+
+        n.add("Bus", nodes + " battery", location=nodes, carrier="battery", unit="MWh_el")
+  
         n.add(
             "Store",
             nodes + " battery",
@@ -4631,7 +4646,6 @@ def add_enhanced_geothermal(n, egs_potentials, egs_overlap, costs):
                 cyclic_state_of_charge=True,
             )
 
-
 # %%
 if __name__ == "__main__":
     if "snakemake" not in globals():
@@ -4695,7 +4709,7 @@ if __name__ == "__main__":
         for carrier in conventional:
             add_carrier_buses(n, carrier)
 
-    add_eu_bus(n)
+    # add_eu_bus(n)
 
     add_co2_tracking(n, costs, options)
 
