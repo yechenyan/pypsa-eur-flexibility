@@ -1,0 +1,21 @@
+run:
+  flex_tag: transmission_mean
+  prefix: scenario
+  name: current
+
+scenario:
+  ll:
+  - copt
+
+lines:
+  max_extension: 20000 #MW
+  length_factor: 1.5
+  under_construction: 'keep'
+
+links:
+  max_extension: 30000 #MW
+  length_factor: 1.5
+  under_construction: 'keep'
+
+electricity:
+  transmission_limit: 'copt'

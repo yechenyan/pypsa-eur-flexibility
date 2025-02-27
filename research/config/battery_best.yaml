@@ -1,0 +1,30 @@
+run:
+  flex_tag: battery_best
+  prefix: scenario
+  name: current
+
+electricity:
+  extendable_carriers:
+    Store: [battery]
+
+sector:
+  battery_enable: true
+
+costs:
+  override:
+    home battery storage:
+      investment: 64.90
+      lifetime: 39
+    home battery inverter:
+      FOM: 0.675
+      investment: 61.32
+      lifetime: 13
+    battery storage:
+      investment: 44.70
+      lifetime: 39
+    battery inverter:
+      efficiency: 0.96
+      FOM: 0.675
+      investment: 42.32
+      lifetime: 13
+    

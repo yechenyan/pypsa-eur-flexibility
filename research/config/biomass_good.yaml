@@ -1,0 +1,24 @@
+run:
+  flex_tag: biomass_good
+  prefix: scenario
+  name: current
+
+
+sector:
+  biomass_boiler: true
+  chp:
+    fuel:
+    - gas
+    - solid biomass
+
+costs:
+  override:
+    biomass boiler:
+      efficiency: 0.93
+      lifetime: 22
+      investment: 510.35584
+      pelletizing cost: 7.2
+    biogas upgrading:
+      VOM: 1.7776
+      lifetime: 27.5
+      investment: 2528.5159

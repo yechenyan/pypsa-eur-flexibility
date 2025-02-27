@@ -1,0 +1,7 @@
+run:
+  flex_tag: warm_mean
+  prefix: scenario
+  name: current
+
+sector:
+  tes: true

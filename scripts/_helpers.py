@@ -980,3 +980,21 @@ def rename_techs(label: str) -> str:
         if old == label:
             label = new
     return label
+
+def override_costs(costs, params):
+ 
+    if 'override' in params:
+        costOverrides = []
+        for technology, parameters in params['override'].items():
+            for parameter, value in parameters.items():
+                costOverrides.append({
+                    'technology': technology,
+                    'parameter': parameter,
+                    'value': value
+                })
+        for item in costOverrides:
+            if (item['technology'], item['parameter']) not in costs.index:
+                raise ValueError(f"Cost override for technology {item['technology']} and parameter {item['parameter']} not found in costs")
+            costs.loc[(item['technology'], item['parameter']), 'value'] = item['value']
+   
+    return costs

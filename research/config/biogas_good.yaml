@@ -1,0 +1,22 @@
+run:
+  flex_tag: biogas_good
+  prefix: scenario
+  name: current
+
+electricity:
+  extendable_carriers:
+    Generator: [solar, solar-hsat, onwind, offwind-ac, offwind-dc, offwind-float, OCGT, CCGT, biogas]
+ 
+sector:
+  biogas_enable: true
+
+costs:
+  override:
+    biogas:
+      fuel: 49.94
+      lifetime: 24
+      investment: 878.33
+    biogas upgrading:
+      VOM: 3.54
+      lifetime: 24
+      investment: 104.63

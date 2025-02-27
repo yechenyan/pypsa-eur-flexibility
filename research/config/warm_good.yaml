@@ -1,0 +1,32 @@
+run:
+  flex_tag: warm_good
+  prefix: scenario
+  name: current
+
+sector:
+  tes: true
+
+costs:
+  override:
+    central water tank storage:
+      investment: 2.50992
+      lifetime: 44
+    decentral water tank storage:
+      investment: 347.09672
+      lifetime: 33
+    central resistive heater:
+      investment: 50.79464
+      lifetime: 22
+    decentral resistive heater:
+      investment: 84.65776
+      lifetime: 22
+    direct air capture:
+      investment: 8827408.032
+      lifetime: 22
+    central air-sourced heat pump:
+      investment: 724.87904
+      lifetime: 27.5
+    decentral air-sourced heat pump:
+      investment: 828.0584
+      lifetime: 19.8
+    

@@ -1,0 +1,22 @@
+run:
+  flex_tag: geothermal_idea
+  prefix: scenario
+  name: current
+
+sector:
+  enhanced_geothermal:
+    enable: true
+    var_cf: true
+    flexible: false
+    capital_factor: 0.1
+
+costs:
+  override:
+    geothermal:
+      FOM: 1
+      lifetime: 100
+      district heat-input: 1
+      district heat surcharge: 22.5
+    organic rankine cycle:
+      lifetime: 100
+      investment: 1

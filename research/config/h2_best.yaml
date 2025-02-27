@@ -1,0 +1,48 @@
+run:
+  flex_tag: h2_best
+  prefix: scenario
+  name: current
+
+electricity:
+  extendable_carriers:
+    Link: ['H2 pipeline']
+    Store: [H2]
+
+sector:
+  hydrogen_fuel_cell: true
+  hydrogen_turbine: true
+  hydrogen_underground_storage_locations:
+  - nearshore
+  # - onshore
+  # - offshore
+  H2_retrofit: true
+  H2_turbine_FOM_Ratio: 0.5
+  H2_turbine_VOM_Ratio: 0.5
+
+costs:
+  override:
+    electrolysis:
+      efficiency: 0.74393
+      FOM: 4
+      investment: 550
+      lifetime: 32.5
+    fuel cell:
+      efficiency: 0.55
+      FOM: 5
+      investment: 462.97195
+      lifetime: 13
+    hydrogen storage underground:
+      investment: 0.7143
+      lifetime: 130
+    hydrogen storage tank type 1 including compressor:
+      investment:  12.712
+      lifetime: 39
+    H2 (g) pipeline repurposed:
+      FOM: 1.5
+      investment: 103.57456
+      lifetime: 55
+    H2 (g) pipeline:
+      FOM: 1.5
+      investment: 151.8422
+      lifetime: 65
+    

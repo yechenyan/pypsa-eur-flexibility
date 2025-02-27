@@ -58,6 +58,7 @@ import xarray as xr
 from _helpers import (
     configure_logging,
     get_snapshots,
+    override_costs,
     rename_techs,
     set_scenario_config,
     update_p_nom_max,
@@ -172,6 +173,7 @@ def add_co2_emissions(n, costs, carriers):
 def load_costs(tech_costs, config, max_hours, Nyears=1.0):
     # set all asset costs and other parameters
     costs = pd.read_csv(tech_costs, index_col=[0, 1]).sort_index()
+    costs = override_costs(costs, config)
 
     # correct units from kW to MW
     costs.loc[costs.unit.str.contains("/kW"), "value"] *= 1e3
@@ -358,6 +360,7 @@ def attach_load(
 
 
 def set_transmission_costs(
+    config,
     n: pypsa.Network,
     costs: pd.DataFrame,
     line_length_factor: float = 1.0,
@@ -368,6 +371,8 @@ def set_transmission_costs(
         * line_length_factor
         * costs.at["HVAC overhead", "capital_cost"]
     )
+
+    n.lines["capital_cost"] = n.lines["capital_cost"] * config['lines'].get('capital_cost_factor', 1)
 
     if n.links.empty:
         return
@@ -391,6 +396,7 @@ def set_transmission_costs(
         + costs.at["HVDC inverter pair", "capital_cost"]
     )
     n.links.loc[dc_b, "capital_cost"] = costs
+    n.links.loc[dc_b, "capital_cost"] = n.links.loc[dc_b, "capital_cost"] * config['links'].get('capital_cost_factor', 1)
 
 
 def attach_wind_and_solar(
@@ -944,6 +950,7 @@ if __name__ == "__main__":
     )
 
     set_transmission_costs(
+        snakemake.config,
         n,
         costs,
         params.line_length_factor,
