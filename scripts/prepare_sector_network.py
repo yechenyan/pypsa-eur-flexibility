@@ -1215,6 +1215,42 @@ def insert_electricity_distribution_grid(n, costs):
         capital_cost=costs.at["electricity distribution grid", "fixed"],
     )
 
+    s_util = 0.67
+    s_flex = 0.5
+    s_inc = 1
+    s_dec = 0
+    delta_t = 1
+    resample = 3
+
+    de_nodes = nodes[nodes.str.startswith('DE')]
+
+    load_p_t = -n.loads_t['p_set'][de_nodes]
+
+    l_t = s_flex * load_p_t
+    lam = load_p_t.sum() * s_flex * resample / (8760 * s_util)
+
+    p_max_t = lam * s_inc - l_t
+    p_min_t = -(l_t - lam * s_dec)
+
+    p_max_pu = p_max_t.clip(lower=0).div(lam) 
+    p_min_pu = p_min_t.clip(upper=0).div(lam)
+
+    p_max_pu_df = p_max_pu.add_suffix(' DSM')
+    p_min_pu_df = p_min_pu.add_suffix(' DSM')
+    lam.index = lam.index.map(lambda x: f"{x} DSM")
+
+    n.add(
+        "StorageUnit",
+        de_nodes + ' DSM',
+        bus =  de_nodes + " low voltage",
+        carrier =  "DSM",
+        max_hours = delta_t,
+        p_nom = lam,
+        p_max_pu = p_max_pu_df,
+        p_min_pu = p_min_pu_df,
+        cyclic_state_of_charge = True
+    )
+
     # deduct distribution losses from electricity demand as these are included in total load
     # https://nbviewer.org/github/Open-Power-System-Data/datapackage_timeseries/blob/2020-10-06/main.ipynb
     if (
